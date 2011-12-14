@@ -1,22 +1,70 @@
 <html>
 <head>
-<script src="trie.js"></script>
-<script src="jquery-1.7.1.min.js"></script>
-<script src="mustache.js"></script>
-<script src="data.js"></script>
+<script type="text/javascript" src="trie.js"></script>
+<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="mustache.js"></script>
+<script type="text/javascript" src="data.js"></script>
+<link href="prettify.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="prettify.js"></script>
 <style>
 body {
   font: 13px/1.5 Helvetica Neue, Arial, Helvetica, sans-serif;
-  line-height: 1em;
+  line-height: normal;
   margin:0;
   padding:0;
   color:#333;
+  text-shadow: 1px 1px 0 #fff;
+}
+h1, h2 {
+  display: block;
+  font-size: 350%;
+  font-weight: 300;
+  margin: 0;
+  padding: 0;
+  line-height: 1.5em;
+  text-align: center;
+}
+h2 {
+  font-size:150%;
+  line-height:1em;
+  color:#666;
+}
+a, a:visit0ed {
+  color:#0069D6;
+  text-decoration:none;
+}
+a:hover {
+  color:#00438A;
+  text-decoration:underline;
+}
+.content {
+  width: 800px;
+  margin: 20px auto;
+}
+.half-grid {
+  float:left;
+  width:358px;
+  display:block;
+  padding:20px;
+  background:#f0f0f0;
+  text-align:center;
+  margin:20px 0;
+  border: 1px solid #e5e5e5;
+  height:100px;
+}
+.first {
+  border-right:1px solid #ddd;
+}
+.last {
+  border-left:1px solid #f5f5f5;
 }
 .ac-text-box {
   width: 200px;
   outline:0 none;
   border:1px solid #aaa;
   border-radius:3px;
+  -webkit-border-radius:3px;
+  -moz-border-radius:3px;
   padding:6px;
   font-size:100%;
   display:block;
@@ -55,6 +103,9 @@ body {
 .ac-drop-down li:nth-child(even) {
   background:#f5f5f5;
 }
+.ac-drop-down li:last-child {
+  border-radius:0 0 3px 3px;
+}
 .ac-drop-down li .head {
   display:block;
   float:left;
@@ -68,17 +119,143 @@ body {
 .ac-drop-down li .right {
   float:right;
 }
+a.button {
+  display:inline-block;
+  background-color:#e6e6e6;
+  background-image: -webkit-linear-gradient(white, white 25%, #E6E6E6);
+  background-image: -moz-linear-gradient(top, white, white 25%, #E6E6E6);
+  background-image: -ms-linear-gradient(white, white 25%, #E6E6E6);
+  background-image: -o-linear-gradient(white, white 25%, #E6E6E6);
+  background-image: linear-gradient(white, white 25%, #E6E6E6);
+  border:1px solid #ccc;
+  border-bottom-color:#bbb;
+  border-radius:3px;
+  color:#333;
+  padding:5px 10px;
+  font-size:13px;
+  text-decoration:none;
+  overflow:hidden;
+  margin-top:5px;
+}
+a.button:hover {
+  border-color:#aaa;
+  text-decoration:none;
+  background:#e6e6e6;
+}
+a.button:active {
+  -webkit-box-shadow: inset 0 2px 3px rgba(0,0,0,0.2);
+  box-shadow: inset 0 2px 3px rgba(0,0,0,0.2);
+}
+a.button em {
+  font-style:normal;
+  color:#888;
+  font-size:11px;
+  line-height:13px;
+}
+.min {
+  display:inline-block;
+  margin-left:5px;
+}
+.version {
+  color:#999;
+  text-shadow:none;
+  margin:5px;
+}
+.desc {
+  width:300px;
+  margin:0 auto;
+}
+pre.prettyprint {
+  margin:10px 30px;
+  color:#555;
+  background: #FEFBF3;
+  border:1px solid rgba(0,0,0,0.2);
+  border-radius:4px;
+  box-shadow:0px 0px 4px rgba(0,0,0,0.15);
+}
+.example {
+  margin:50px auto;
+  position:relative;
+  clear:both;
+  width:300px;
+}
+footer {
+  width:800px;
+  margin:50px auto 0;
+  background:#f0f0f0;
+  height:100px;
+  position:relative;
+}
+footer a,
+footer a:visited {
+  color: #84aeda;
+}
+footer a:hover {
+  color:#0069D6;
+}
+footer p {
+  padding:20px;
+  color:#aaa;
+}
+.right {
+  float:right;
+  position:absolute;
+  top:0;
+  right:0;
+  padding:20px;
+  color:#aaa;
+}
 </style>
 </head>
-<body>
-<div style="margin:50px;position:relative;">
-<input type="text" id="simple-test" class="ac-text-box" placeholder="U.S states..." />
-<ul id="simple-test-ac" class="ac-drop-down" style="display:none;"></ul>
+<body onload="prettyPrint()">
+<div class="content">
+  <h1>Triejs</h1>
+  <h2>Customizable Trie Data Structure in Javascript</h2>
+  <div class="half-grid first">
+    <div class="desc">Download just the raw code in full or minified form and get started using it right away.</div>
+    <div class="version">Current Revision v0.0.1</div>
+    <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.js" class="button">Download Raw <em>8.2 kb</em></a>
+    <a href="" class="min">Minified</a>
+  </div>
+  <div class="half-grid last">
+    <div class="desc" style="margin:10px auto">Or fork this project on GitHub and make revisions and pull requests now.</div>
+    <a href="https://github.com/pthurlow/triejs" class="button">Triejs on GitHub &raquo</a>
+  </div>
+  <h3>Example Usage</h3>
+  <p>To create a simple dictionary lookup for words, just create a new trie with default options</p>
+  <p>Add words and get words by prefix through a simple interface</p>
+  <div class="example">
+  <input type="text" id="simple-test" class="ac-text-box" placeholder="U.S states..." />
+  <ul id="simple-test-ac" class="ac-drop-down" style="display:none;"></ul>
+  </div>
+  <pre class="prettyprint"><code class="language-js">
+  var trie = new exports.Triejs();
+  trie.addWord("Alaska", "Alaska");
+  trie.getPrefix("Al");
+  </code></pre>
+  <p>If you need a custom data structure to store data you can extend the trie with optional parameters</p>
+  <p>These parameters allow you to add the ability to insert, sort, and prune data as you need</p>
+  <div class="example">
+  <input type="text" id="data-test" class="ac-text-box" placeholder="Cities by population..." />
+  <ul id="data-test-ac" class="ac-drop-down" style="display:none;"></ul>
+  </div>
+  <pre class="prettyprint"><code class="language-js">
+  var trie = new exports.Triejs({
+    // customize the sorting algorithm to sort by population parameter in data object
+    sort: function() {
+      this.sort(function(a, b) { return b.population - a.population; }
+    }
+  });
+  trie.addWord("Phoenix", { city: "Phoenix", state: "Arizona", population: 1476331 });
+  trie.getPrefix("Ph");
+  </code></pre>
 </div>
-<div style="margin:50px;position:relative;">
-<input type="text" id="data-test" class="ac-text-box" placeholder="Cities by population..." />
-<ul id="data-test-ac" class="ac-drop-down" style="display:none;"></ul>
-</div>
+<footer>
+<p>Created by Paul Thurlow &copy 2011<br />
+Licensed under the <a href="http://www.opensource.org/licenses/mit-license.php">MIT Licencse</a>
+</p>
+<div class="right"><a href="http://github.com/pthurlow">pthurlow</a> on GitHub | <a href="http://twitter.com/pthurlow">@pthurlow</a> on Twitter</div>
+</footer>
 </body>
 <script>
 $(function() {
