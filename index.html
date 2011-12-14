@@ -29,7 +29,7 @@ h2 {
   line-height:1em;
   color:#666;
 }
-a, a:visit0ed {
+a, a:visited {
   color:#0069D6;
   text-decoration:none;
 }
@@ -205,6 +205,19 @@ footer p {
   padding:20px;
   color:#aaa;
 }
+.github {
+  display:block;
+  float:left;
+  margin:5px;
+}
+.github-button {
+  width:170px;
+  margin:0 auto;
+  overflow:hidden;
+}
+.github-button .button {
+  float:left;
+}
 </style>
 </head>
 <body onload="prettyPrint()">
@@ -215,11 +228,11 @@ footer p {
     <div class="desc">Download just the raw code in full or minified form and get started using it right away.</div>
     <div class="version">Current Revision v0.0.1</div>
     <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.js" class="button">Download Raw <em>8.2 kb</em></a>
-    <a href="" class="min">Minified</a>
+    <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.min.js" class="min">Minified 3.3 kb</a>
   </div>
   <div class="half-grid last">
     <div class="desc" style="margin:10px auto">Or fork this project on GitHub and make revisions and pull requests now.</div>
-    <a href="https://github.com/pthurlow/triejs" class="button">Triejs on GitHub &raquo</a>
+    <div class="github-button"><img class="github" src="blacktocat.png"><a href="https://github.com/pthurlow/triejs" class="button">Triejs on GitHub &raquo</a></div>
   </div>
   <h3>Example Usage</h3>
   <p>To create a simple dictionary lookup for words, just create a new trie with default options</p>
