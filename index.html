@@ -272,29 +272,29 @@ footer p {
   </div>
   <div class="grid-70">
     <pre class="prettyprint"><code class="language-js">
-    var trie = new exports.Triejs();
-    trie.addWord("Alaska", "Alaska");
-    trie.getPrefix("Al");
+  var trie = new exports.Triejs();
+  trie.addWord("Alaska", "Alaska");
+  trie.getPrefix("Al");
     </code></pre>
   </div>
   <p>If you need a custom data structure to store data you can extend the trie with optional parameters.  These parameters allow you to add the ability to insert, sort, and prune data as you need</p>
   <div class="grid-70">
     <pre class="prettyprint"><code class="language-js">
-    var trie = new exports.Triejs({
-      // customize the sorting algorithm to sort
-      // by population parameter in data object
-      sort: function() {
-        this.sort(function(a, b) {
-          return b.population - a.population;
-        }
+  var trie = new exports.Triejs({
+    // customize the sorting algorithm to sort
+    // by population parameter in data object
+    sort: function() {
+      this.sort(function(a, b) {
+        return b.population - a.population;
       }
-    });
-    trie.addWord("Phoenix", {
-      city: "Phoenix"
-      , state: "Arizona"
-      , population: 1476331
-    });
-    trie.getPrefix("Ph");
+    }
+  });
+  trie.addWord("Phoenix", {
+    city: "Phoenix"
+    , state: "Arizona"
+    , population: 1476331
+  });
+  trie.getPrefix("Ph");
     </code></pre>
   </div>
   <div class="grid-30">
@@ -307,43 +307,43 @@ footer p {
   <h3>Technical Details</h3>
   <p>This <a href="http://en.wikipedia.org/wiki/Trie">trie</a> implementation is modeled after <a href="http://ejohn.org/blog/javascript-trie-performance-analysis/">John Resig's post</a> on performant trie structures.  It builds a hash of chars at each node level, with each char containing a hash of a words containing all previous char nodes.  At the completion of a word it stores the data in a data property.  Thus the storage of the word "ant" would look something like this:
   <pre class="prettyprint"><code class="language-js">
-    var root = {
-      a: {
-        n: {
-          t: {
-            data: 'ant'
-          }
+  var root = {
+    a: {
+      n: {
+        t: {
+          data: 'ant'
         }
       }
     }
+  }
   </code></pre>
   However, there is also a level of compression built in such that suffixes that are unique are squashed into a suffix property at the point of uniqueness.  Thus in the previous example, "ant" would actually compress to the following:
   <pre class="prettyprint"><code class="language-js">
-    var root = {
-      a: {
-        data: 'ant'
-        , suffix: 'nt'
-      }
+  var root = {
+    a: {
+      data: 'ant'
+      , suffix: 'nt'
     }
+  }
   </code></pre>
   You can also see how two similar words would start with combined nodes and then end with suffixes at the point of uniqueness.  Here is what the two words "antman" and "anteater" would look like when added into the trie:
   <pre class="prettyprint"><code class="language-js">
-    var root = {
-      a: {
-        n: {
-          t: {
-            e: {
-              data: 'anteater'
-              , suffix: 'ater'
-            }
-            , m: {
-              data: 'antman'
-              , suffix: 'an'
-            }
+  var root = {
+    a: {
+      n: {
+        t: {
+          e: {
+            data: 'anteater'
+            , suffix: 'ater'
+          }
+          , m: {
+            data: 'antman'
+            , suffix: 'an'
           }
         }
       }
     }
+  }
   </code></pre>
 </div>
 <footer>
