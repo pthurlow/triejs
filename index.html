@@ -15,7 +15,8 @@ body {
   color:#333;
   text-shadow: 1px 1px 0 #fff;
 }
-h1, h2 {
+h1, h2, h3, h4 {
+  clear:both;
   display: block;
   font-size: 350%;
   font-weight: 300;
@@ -28,6 +29,19 @@ h2 {
   font-size:150%;
   line-height:1em;
   color:#666;
+}
+h3 {
+  font-size:150%;
+  font-weight:bold;
+  line-height:1em;
+  text-align:left;
+}
+h4 {
+  font-size:125%;
+  font-weight:300;
+  line-height:1em;
+  text-align:left;
+  margin: 10px 0;
 }
 a, a:visited {
   color:#0069D6;
@@ -51,6 +65,14 @@ a:hover {
   margin:20px 0;
   border: 1px solid #e5e5e5;
   height:100px;
+}
+.grid-30 {
+  float:left;
+  width:240px;
+}
+.grid-70 {
+  float:left;
+  width:560px;
 }
 .first {
   border-right:1px solid #ddd;
@@ -166,18 +188,20 @@ a.button em {
   margin:0 auto;
 }
 pre.prettyprint {
-  margin:10px 30px;
+  margin:20px 30px;
   color:#555;
   background: #FEFBF3;
   border:1px solid rgba(0,0,0,0.2);
   border-radius:4px;
-  box-shadow:0px 0px 4px rgba(0,0,0,0.15);
+  box-shadow:inset 0px 0px 5px rgba(0,0,0,0.15);
 }
 .example {
-  margin:50px auto;
-  position:relative;
+  margin:30px;
   clear:both;
-  width:300px;
+  width:200px;
+}
+.example-right {
+  margin-left:10px;
 }
 footer {
   width:800px;
@@ -192,6 +216,9 @@ footer a:visited {
 }
 footer a:hover {
   color:#0069D6;
+}
+p {
+  clear:both;
 }
 footer p {
   padding:20px;
@@ -235,32 +262,88 @@ footer p {
     <div class="github-button"><img class="github" src="blacktocat.png"><a href="https://github.com/pthurlow/triejs" class="button">Triejs on GitHub &raquo</a></div>
   </div>
   <h3>Example Usage</h3>
-  <p>To create a simple dictionary lookup for words, just create a new trie with default options</p>
-  <p>Add words and get words by prefix through a simple interface</p>
-  <div class="example">
-  <input type="text" id="simple-test" class="ac-text-box" placeholder="U.S states..." />
-  <ul id="simple-test-ac" class="ac-drop-down" style="display:none;"></ul>
+  <p>To create a simple dictionary lookup for words, just create a new trie with default options.  Add words and get words by prefix through a simple interface</p>
+  <div class="grid-30">
+    <div class="example">
+    <h4>Example autocomplete</h4>
+    <input type="text" id="simple-test" class="ac-text-box" placeholder="U.S states..." />
+    <ul id="simple-test-ac" class="ac-drop-down" style="display:none;"></ul>
+    </div>
   </div>
-  <pre class="prettyprint"><code class="language-js">
-  var trie = new exports.Triejs();
-  trie.addWord("Alaska", "Alaska");
-  trie.getPrefix("Al");
-  </code></pre>
-  <p>If you need a custom data structure to store data you can extend the trie with optional parameters</p>
-  <p>These parameters allow you to add the ability to insert, sort, and prune data as you need</p>
-  <div class="example">
-  <input type="text" id="data-test" class="ac-text-box" placeholder="Cities by population..." />
-  <ul id="data-test-ac" class="ac-drop-down" style="display:none;"></ul>
+  <div class="grid-70">
+    <pre class="prettyprint"><code class="language-js">
+    var trie = new exports.Triejs();
+    trie.addWord("Alaska", "Alaska");
+    trie.getPrefix("Al");
+    </code></pre>
   </div>
+  <p>If you need a custom data structure to store data you can extend the trie with optional parameters.  These parameters allow you to add the ability to insert, sort, and prune data as you need</p>
+  <div class="grid-70">
+    <pre class="prettyprint"><code class="language-js">
+    var trie = new exports.Triejs({
+      // customize the sorting algorithm to sort
+      // by population parameter in data object
+      sort: function() {
+        this.sort(function(a, b) {
+          return b.population - a.population;
+        }
+      }
+    });
+    trie.addWord("Phoenix", {
+      city: "Phoenix"
+      , state: "Arizona"
+      , population: 1476331
+    });
+    trie.getPrefix("Ph");
+    </code></pre>
+  </div>
+  <div class="grid-30">
+    <div class="example example-right">
+    <h4>Example autocomplete</h4>
+    <input type="text" id="data-test" class="ac-text-box" placeholder="Cities by population..." />
+    <ul id="data-test-ac" class="ac-drop-down" style="display:none;"></ul>
+    </div>
+  </div>
+  <h3>Technical Details</h3>
+  <p>This <a href="http://en.wikipedia.org/wiki/Trie">trie</a> implementation is modeled after <a href="http://ejohn.org/blog/javascript-trie-performance-analysis/">John Resig's post</a> on performant trie structures.  It builds a hash of chars at each node level, with each char containing a hash of a words containing all previous char nodes.  At the completion of a word it stores the data in a data property.  Thus the storage of the word "ant" would look something like this:
   <pre class="prettyprint"><code class="language-js">
-  var trie = new exports.Triejs({
-    // customize the sorting algorithm to sort by population parameter in data object
-    sort: function() {
-      this.sort(function(a, b) { return b.population - a.population; }
+    var root = {
+      a: {
+        n: {
+          t: {
+            data: 'ant'
+          }
+        }
+      }
     }
-  });
-  trie.addWord("Phoenix", { city: "Phoenix", state: "Arizona", population: 1476331 });
-  trie.getPrefix("Ph");
+  </code></pre>
+  However, there is also a level of compression built in such that suffixes that are unique are squashed into a suffix property at the point of uniqueness.  Thus in the previous example, "ant" would actually compress to the following:
+  <pre class="prettyprint"><code class="language-js">
+    var root = {
+      a: {
+        data: 'ant'
+        , suffix: 'nt'
+      }
+    }
+  </code></pre>
+  You can also see how two similar words would start with combined nodes and then end with suffixes at the point of uniqueness.  Here is what the two words "antman" and "anteater" would look like when added into the trie:
+  <pre class="prettyprint"><code class="language-js">
+    var root = {
+      a: {
+        n: {
+          t: {
+            e: {
+              data: 'anteater'
+              , suffix: 'ater'
+            }
+            , m: {
+              data: 'antman'
+              , suffix: 'an'
+            }
+          }
+        }
+      }
+    }
   </code></pre>
 </div>
 <footer>
@@ -284,12 +367,15 @@ $(function() {
       , val = $input.val()
       , responses = simpleTest.getPrefix(val)
       , $acList = $('#simple-test-ac');
+
     if (responses) {
       $acList.html(Mustache.to_html(
           "{{#responses}}<li>{{.}}</li>{{/responses}}"
         , {responses: responses}
       ));
       $input.addClass('ac-open');
+      $acList.css('top', ($input.position().top + $input.outerHeight()) + 2);
+      $acList.css('left', ($input.position().left))
       $acList.show();
     } else {
       $acList.hide();
@@ -317,7 +403,8 @@ $(function() {
 
   // register keypress handler to search trie
   $('#data-test').on('keyup focus', function() {
-    var val = $('#data-test').val()
+    var $input = $('#data-test')
+      , val = $input.val()
       , responses = dataTest.getPrefix(val)
       , $acList = $('#data-test-ac');
 
@@ -329,6 +416,10 @@ $(function() {
       , {responses: responses}
       ));
       $('#data-test').addClass('ac-open');
+      $acList.css({
+        'top': $input.position().top + $input.outerHeight() + 2
+        , 'left': $input.position().left
+      });
       $acList.show();
     } else {
       $acList.hide();
