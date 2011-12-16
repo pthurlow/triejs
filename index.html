@@ -272,7 +272,8 @@ footer p {
   </div>
   <div class="grid-70">
     <pre class="prettyprint"><code class="language-js">
-  var trie = new exports.Triejs();
+  var Triejs = require('triejs')
+    , trie = new Triejs();
   trie.addWord("Alaska", "Alaska");
   trie.getPrefix("Al");
     </code></pre>
@@ -280,7 +281,7 @@ footer p {
   <p>If you need a custom data structure to store data you can extend the trie with optional parameters.  These parameters allow you to add the ability to insert, sort, and prune data as you need</p>
   <div class="grid-70">
     <pre class="prettyprint"><code class="language-js">
-  var trie = new exports.Triejs({
+  var trie = new Triejs({
     // customize the sorting algorithm to sort
     // by population parameter in data object
     sort: function() {
