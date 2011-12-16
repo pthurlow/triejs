@@ -74,6 +74,26 @@ a:hover {
   float:left;
   width:560px;
 }
+.grid-33 {
+  float:left;
+  width:224px;
+  background:#f0f0f0;
+  padding:20px;
+  margin:20px 0;
+  text-align:center;
+  border:1px solid #e5e5e5;
+  height:110px;
+}
+.code {
+  width:160px;
+  margin: 30px auto;
+  background:#fafafa;
+  padding:5px;
+  box-shadow:inset -3px 4px 5px -4px rgba(0,0,0,0.2);
+  border:1px solid #ddd;
+  font-family:monospace;
+  font-size:11px;
+}
 .first {
   border-right:1px solid #ddd;
 }
@@ -177,6 +197,8 @@ a.button em {
 .min {
   display:inline-block;
   margin-left:5px;
+  margin-top:5px;
+  padding:5px;
 }
 .version {
   color:#999;
@@ -184,8 +206,8 @@ a.button em {
   margin:5px;
 }
 .desc {
-  width:300px;
-  margin:0 auto;
+  width:220px;
+  margin:5px auto 10px auto;
 }
 pre.prettyprint {
   margin:20px 30px;
@@ -235,7 +257,7 @@ footer p {
 .github {
   display:block;
   float:left;
-  margin:5px;
+  margin:6px;
 }
 .github-button {
   width:170px;
@@ -251,14 +273,18 @@ footer p {
 <div class="content">
   <h1>Triejs</h1>
   <h2>Customizable Trie Data Structure in Javascript</h2>
-  <div class="half-grid first">
-    <div class="desc">Download just the raw code in full or minified form and get started using it right away.</div>
+  <div class="grid-33 first">
+    <div class="desc">Download just the raw code and get started using it right away.</div>
     <div class="version">Current Revision v0.0.2</div>
-    <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.js" class="button">Download Raw <em>8.2 kb</em></a>
-    <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.min.js" class="min">Minified 3.3 kb</a>
+    <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.js" class="button" style="float:left;margin-left:5px">Download <em>9.2 kb</em></a>
+    <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.min.js" class="min">Minified 3.8 kb</a>
   </div>
-  <div class="half-grid last">
-    <div class="desc" style="margin:10px auto">Or fork this project on GitHub and make revisions and pull requests now.</div>
+  <div class="grid-33 first last">
+    <div class="desc">Install via npm and use it in your node project.</div>
+    <div class="code">npm install triejs</div>
+  </div>
+  <div class="grid-33 last">
+    <div class="desc">Or fork this project on GitHub and make revisions and pull requests now.</div>
     <div class="github-button"><img class="github" src="blacktocat.png"><a href="https://github.com/pthurlow/triejs" class="button">Triejs on GitHub &raquo</a></div>
   </div>
   <h3>Example Usage</h3>
