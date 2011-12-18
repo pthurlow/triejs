@@ -19,11 +19,8 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-if (typeof exports === 'undefined') {
-  var exports = {};
-}
+(function() {
 
-(function(exports) {
   /**
   * @decription Trie class for saving data by keywords accessible through
   *   word prefixes
@@ -33,7 +30,7 @@ if (typeof exports === 'undefined') {
 
     /**
     * @private
-    * @description options for trie implementation
+    * @description Options for trie implementation
     * @type {Object}
     */
     this.options = {
@@ -43,6 +40,18 @@ if (typeof exports === 'undefined') {
       * @type {Number}
       */
       maxCache: 10
+
+      /**
+      * @description Whether to handle caching on node levels
+      * @type {Boolean}
+      */
+      , enableCache: true
+
+      /**
+      * @description Maintain insert ordering when adding to non cached trie
+      * @type {Boolean}
+      */
+      , insertOrder: false
     
       /**
       * @description Insert function for adding new items to cache
@@ -67,6 +76,12 @@ if (typeof exports === 'undefined') {
       * @type {Function}
       */
       , copy: null
+
+      /**
+      * @description merge to data sets together
+      * @type {Function}
+      */
+      , merge: null
     };
 
     /**
@@ -75,6 +90,7 @@ if (typeof exports === 'undefined') {
     * @type {Object}
     */
     this.root = {};
+    this.index = 0;
 
     // mixin optional override options
     for (var key in opts) {
@@ -85,7 +101,10 @@ if (typeof exports === 'undefined') {
 
     if (typeof this.options.insert != 'function') {
       this.options.insert = function(target, data) {
-        if (target.length) {
+        if (this.options.insertOrder && typeof data.d === 'undefined' && typeof data.o === 'undefined') {
+          data = { d: data, o: this.index++ };
+        }
+        if (target && target.length) {
           target.push(data);
         } else {
           target = [data];
@@ -93,19 +112,35 @@ if (typeof exports === 'undefined') {
         return target;
       };
     }
-    if (typeof this.options.sort != 'function') {
-      this.options.sort = function() {};
+    if (typeof this.options.sort != 'function' && !this.options.insertOrder) {
+      this.options.sort = function() {
+        this.sort();
+      };
+    } else if (typeof this.options.sort != 'function' && this.options.insertOrder) {
+      this.options.sort = function() {
+        this.sort(function(a, b) { return a.o - b.o; });
+      }
     }
     if (typeof this.options.clip != 'function') {
       this.options.clip = function(max) {
         if (this.length > max) {
-          this.splice(0, this.length - max);
+          this.splice(max, this.length - max);
         }
       };
     }
     if (typeof this.options.copy != 'function') {
       this.options.copy = function(data) {
         return data.slice(0);
+      }
+    }
+    if (typeof this.options.merge != 'function') {
+      this.options.merge = function(target, data) {
+        for (var i = 0, ii = data.length; i < ii; i++) {
+          target = this.options.insert.call(this, target, data[i]);
+          this.options.sort.call(target);
+          this.options.clip.call(target, this.options.maxCache);
+        }
+        return target;
       }
     }
   };
@@ -119,15 +154,15 @@ if (typeof exports === 'undefined') {
     * @private
     */
     _addCacheData: function(curr, data) {
-      if (curr == this.root) {
+      if (curr == this.root || this.options.enableCache === false) {
         return; // safety check to not store cache at root level
       }
-      if (!curr.data) {
-        curr.data = {};
+      if (!curr.$d) {
+        curr.$d = {};
       }
-      curr.data = this.options.insert.call(this, curr.data, data);
-      this.options.sort.call(curr.data);
-      this.options.clip.call(curr.data, this.options.maxCache);
+      curr.$d = this.options.insert.call(this, curr.$d, data);
+      this.options.sort.call(curr.$d);
+      this.options.clip.call(curr.$d, this.options.maxCache);
     }
 
     /**
@@ -140,13 +175,14 @@ if (typeof exports === 'undefined') {
     , _addSuffix: function(suffix, data, curr) {
       var letter = suffix.charAt(0)
         , nextSuffix = suffix.substring(1) || null
-        , opts = { data: {} };
+        , opts = { $d: {} };
       if (nextSuffix) {
-        opts.suffix = nextSuffix;
+        opts.$s = nextSuffix;
       }
-      curr[letter] = opts;
-      curr[letter].data = this.options.insert.call(this, curr[letter].data, data);
-      //this.options.insert.call(this, curr[letter].data, data);
+      if (typeof curr[letter] === 'undefined') {
+        curr[letter] = opts;
+      }
+      curr[letter].$d = this.options.insert.call(this, curr[letter].$d, data);
     }
 
     /**
@@ -159,12 +195,14 @@ if (typeof exports === 'undefined') {
     , _moveSuffix: function(suffix, data, curr) {
       var letter = suffix.charAt(0)
         , nextSuffix = suffix.substring(1) || null
-        , opts = { data: {} };
+        , opts = { $d: {} };
       if (nextSuffix) {
-        opts.suffix = nextSuffix;
+        opts.$s = nextSuffix;
       }
-      curr[letter] = opts;
-      curr[letter].data = this.options.copy(data);
+      if (typeof curr[letter] === 'undefined') {
+        curr[letter] = opts;
+      }
+      curr[letter].$d = this.options.copy(data);
     }
 
     /**
@@ -174,6 +212,7 @@ if (typeof exports === 'undefined') {
     */
     , addWord: function(word, data) {
       if (typeof word != 'string') { return false; }
+      if (arguments.length == 1) { data = word; }
       word = word.toLowerCase();
 
       var curr = this.root;
@@ -183,9 +222,12 @@ if (typeof exports === 'undefined') {
         // No letter at this level
         if (!curr[letter]) {
           // Current level has a suffix already so push suffix lower in trie
-          if (curr.suffix) {
-            this._moveSuffix(curr.suffix, curr.data, curr);
-            delete curr.suffix;
+          if (curr.$s) {
+            this._moveSuffix(curr.$s, curr.$d, curr);
+            delete curr.$s;
+            if (this.options.enableCache === false) {
+              delete curr.$d;
+            }
           }
           // Current level has no sub letter after building suffix
           if (!curr[letter]) {
@@ -198,9 +240,14 @@ if (typeof exports === 'undefined') {
           // if its the end of a word push possible suffixes at this node down
           // and add data to cache at the words end
           if (i == ii - 1) {
-            if (curr[letter].suffix) {
-              this._moveSuffix(curr[letter].suffix, curr[letter].data, curr[letter]);
-              delete curr[letter].suffix;
+            if (curr[letter].$s) {
+              this._moveSuffix(curr[letter].$s, curr[letter].$d, curr[letter]);
+              delete curr[letter].$s;
+              if (this.options.enableCache === false) {
+                delete curr[letter].$d;
+              }
+              // insert new data at current end of word node level
+              this._addSuffix(letter, data, curr);
             }
             this._addCacheData(curr[letter], data);
           }
@@ -232,8 +279,8 @@ if (typeof exports === 'undefined') {
       for (var i = 0, ii = prefix.length; i < ii; i++) {
         var letter = prefix.charAt(i);
         if (!curr[letter]) {
-          if (curr.suffix && curr.suffix.indexOf(prefix.substring(i)) == 0) {
-            return curr.data;
+          if (curr.$s && curr.$s.indexOf(prefix.substring(i)) == 0) {
+            return this._getDataAtNode(curr);
           } else {
             return undefined;
           }
@@ -241,7 +288,31 @@ if (typeof exports === 'undefined') {
           curr = curr[letter];
         }
       }
-      return curr.data;
+      return this._getDataAtNode(curr);
+    }
+
+    /**
+    * @description Get data from a given node, either in the cache
+    *   or by parsing the subtree
+    * @param node {Object} The node to get data from
+    * @return {Array|Object} data results
+    */
+    , _getDataAtNode: function(node) {
+      var data;
+
+      if (this.options.enableCache) {
+        data = node.$d;
+      } else {
+        data = this.getSubtree(node);
+      }
+      if (this.options.insertOrder) {
+        var temp = [];
+        for (var i = 0, ii = data.length; i < ii; i++) {
+          temp.push(data[i].d);
+        }
+        data = temp;
+      }
+      return this.options.copy(data);
     }
 
     /**
@@ -256,9 +327,9 @@ if (typeof exports === 'undefined') {
       while (node = nodeArray.pop()) {
         for (var newNode in node) {
           if (node.hasOwnProperty(newNode)) {
-            if (newNode == 'data') {
-              res.push(node.data);
-            } else if (newNode != 'suffix') {
+            if (newNode == '$d') {
+              res = this.options.merge.call(this, res, node.$d);
+            } else if (newNode != '$s') {
               nodeArray.push(node[newNode]);
             }
           }
@@ -268,5 +339,18 @@ if (typeof exports === 'undefined') {
     }
   };
 
-  exports.Triejs = Triejs;
-})(exports);
+  //Export to CommonJS/Node format
+  if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+      exports = module.exports = Triejs;
+    }
+    exports.Triejs = Triejs;
+  } else if (typeof define === 'function' && define.amd) {
+    define('triejs', function() {
+      return Triejs;
+    });
+  } else {
+    // no exports so attach to global
+    this['Triejs'] = Triejs;
+  }
+})(this);

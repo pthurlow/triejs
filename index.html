@@ -283,9 +283,9 @@ footer p {
   <h2>Customizable Trie Data Structure in Javascript</h2>
   <div class="grid-33 first">
     <div class="desc">Download just the raw code and get started using it right away.</div>
-    <div class="version">Current Revision v0.0.2</div>
-    <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.js" class="button" style="float:left;margin-left:5px">Download <em>9.2 kb</em></a>
-    <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.min.js" class="min">Minified 3.8 kb</a>
+    <div class="version">Current Revision v0.0.3</div>
+    <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.js" class="button" style="float:left;margin-left:5px">Download <em>10.8 kb</em></a>
+    <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.min.js" class="min">Minified 4.5 kb</a>
   </div>
   <div class="grid-33 first last">
     <div class="desc">Install via npm and use it in your node project.</div>
@@ -384,7 +384,7 @@ Licensed under the <a href="http://www.opensource.org/licenses/mit-license.php">
 $(function() {
 
   // Load simple data set into a trie
-  var simpleTest = new exports.Triejs();
+  var simpleTest = new Triejs();
   for (var i = 0, ii = states.length; i < ii; i++) {
     simpleTest.addWord(states[i], states[i]);
   }
@@ -415,7 +415,7 @@ $(function() {
 
 
   // load complex data set into trie with custom sorting options
-  var dataTest = new exports.Triejs({
+  var dataTest = new Triejs({
     // custom sorting function sorts the array of objects based on population
     sort: function() {
         this.sort(function(a, b) { return b.pop - a.pop; });
