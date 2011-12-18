@@ -15,6 +15,9 @@ body {
   color:#333;
   text-shadow: 1px 1px 0 #fff;
 }
+.med {
+  font-size:14px;
+}
 h1, h2, h3, h4 {
   clear:both;
   display: block;
@@ -99,6 +102,11 @@ a:hover {
 }
 .last {
   border-left:1px solid #f5f5f5;
+}
+p code {
+  padding: 0 3px 0 1px;
+  background:#eee;
+  border: 1px solid #ccc;
 }
 .ac-text-box {
   width: 200px;
@@ -288,7 +296,7 @@ footer p {
     <div class="github-button"><img class="github" src="blacktocat.png"><a href="https://github.com/pthurlow/triejs" class="button">Triejs on GitHub &raquo</a></div>
   </div>
   <h3>Example Usage</h3>
-  <p>To create a simple dictionary lookup for words, just create a new trie with default options.  Add words and get words by prefix through a simple interface</p>
+  <p class="med">To create a simple dictionary lookup for words, just create a new trie with default options.  Add words and get words by prefix through a simple interface</p>
   <div class="grid-30">
     <div class="example">
     <h4>Example autocomplete</h4>
@@ -304,7 +312,7 @@ footer p {
   trie.getPrefix("Al");
     </code></pre>
   </div>
-  <p>If you need a custom data structure to store data you can extend the trie with optional parameters.  These parameters allow you to add the ability to insert, sort, and prune data as you need</p>
+  <p class="med">If you need a custom data structure to store data you can extend the trie with optional parameters.  These parameters allow you to add the ability to insert, sort, and prune data as you need</p>
   <div class="grid-70">
     <pre class="prettyprint"><code class="language-js">
   var trie = new Triejs({
@@ -332,45 +340,37 @@ footer p {
     </div>
   </div>
   <h3>Technical Details</h3>
-  <p>This <a href="http://en.wikipedia.org/wiki/Trie">trie</a> implementation is modeled after <a href="http://ejohn.org/blog/javascript-trie-performance-analysis/">John Resig's post</a> on performant trie structures.  It builds a hash of chars at each node level, with each char containing a hash of a words containing all previous char nodes.  At the completion of a word it stores the data in a data property.  Thus the storage of the word "ant" would look something like this:
+  <p class="med">This <a href="http://en.wikipedia.org/wiki/Trie">trie</a> implementation is modeled after <a href="http://ejohn.org/blog/javascript-trie-performance-analysis/">John Resig's post</a> on performant trie structures.  It builds a hash of chars at each node level, with each char containing a hash of a words containing all previous char nodes.  At the completion of a word it stores the data in a data property <code>$d</code>.  Thus the storage of the word "ant" would look something like this:</p>
   <pre class="prettyprint"><code class="language-js">
   var root = {
     a: {
       n: {
         t: {
-          data: 'ant'
-        }
-      }
-    }
-  }
+          $d: 'ant'
+  } } } }
   </code></pre>
-  However, there is also a level of compression built in such that suffixes that are unique are squashed into a suffix property at the point of uniqueness.  Thus in the previous example, "ant" would actually compress to the following:
+  <p class="med">However, there is also a level of compression built in such that suffixes that are unique are squashed into a suffix property <code>$s</code> at the point of uniqueness.  Thus in the previous example, "ant" would actually compress to the following:</p>
   <pre class="prettyprint"><code class="language-js">
   var root = {
     a: {
-      data: 'ant'
-      , suffix: 'nt'
-    }
-  }
+      $d: 'ant'
+      , $s: 'nt'
+  } }
   </code></pre>
-  You can also see how two similar words would start with combined nodes and then end with suffixes at the point of uniqueness.  Here is what the two words "antman" and "anteater" would look like when added into the trie:
+  <p class="med">You can also see how two similar words would start with combined nodes and then end with suffixes at the point of uniqueness.  Here is what the two words "antman" and "anteater" would look like when added into the trie:</p>
   <pre class="prettyprint"><code class="language-js">
   var root = {
     a: {
       n: {
         t: {
           e: {
-            data: 'anteater'
+            $d: 'anteater'
             , suffix: 'ater'
           }
           , m: {
-            data: 'antman'
-            , suffix: 'an'
-          }
-        }
-      }
-    }
-  }
+            $d: 'antman'
+            , $s: 'an'
+  } } } } }
   </code></pre>
 </div>
 <footer>
