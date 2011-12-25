@@ -284,13 +284,13 @@ footer p {
   <h2>Customizable Trie Data Structure in Javascript</h2>
   <div class="grid-33 first">
     <div class="desc">Download just the raw code and get started using it right away.</div>
-    <div class="version">Current Revision v0.0.3</div>
-    <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.js" class="button" style="float:left;margin-left:5px">Download <em>10.8 kb</em></a>
+    <div class="version">Current Revision v0.1.0</div>
+    <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.js" class="button" style="float:left;margin-left:5px">Download <em>11.6 kb</em></a>
     <a href="https://raw.github.com/pthurlow/triejs/master/src/trie.min.js" class="min">Minified 4.5 kb</a>
   </div>
   <div class="grid-33 first last">
     <div class="desc">Install via npm and use it in your node project.</div>
-    <div class="code">npm install triejs</div>
+    <div class="code">$ npm install triejs</div>
   </div>
   <div class="grid-33 last">
     <div class="desc">Or fork this project on GitHub and make revisions and pull requests now.</div>
@@ -309,8 +309,8 @@ footer p {
     <pre class="prettyprint"><code class="language-js">
   var Triejs = require('triejs')
     , trie = new Triejs();
-  trie.addWord("Alaska", "Alaska");
-  trie.getPrefix("Al");
+  trie.add("Alaska");
+  trie.find("Al");
     </code></pre>
   </div>
   <p class="med">If you need a custom data structure to store data you can extend the trie with optional parameters.  These parameters allow you to add the ability to insert, sort, and prune data as you need</p>
@@ -325,12 +325,12 @@ footer p {
       }
     }
   });
-  trie.addWord("Phoenix", {
+  trie.add("Phoenix", {
     city: "Phoenix"
     , state: "Arizona"
     , population: 1476331
   });
-  trie.getPrefix("Ph");
+  trie.find("Ph");
     </code></pre>
   </div>
   <div class="grid-30">
@@ -387,13 +387,13 @@ $(function() {
   // Load simple data set into a trie
   var simpleTest = new Triejs();
   for (var i = 0, ii = states.length; i < ii; i++) {
-    simpleTest.addWord(states[i], states[i]);
+    simpleTest.add(states[i], states[i]);
   }
   // register keypress handler to search trie
   $('#simple-test').on('keyup focus', function() {
     var $input = $('#simple-test')
       , val = $input.val()
-      , responses = simpleTest.getPrefix(val)
+      , responses = simpleTest.find(val)
       , $acList = $('#simple-test-ac');
 
     if (responses) {
@@ -426,14 +426,14 @@ $(function() {
     }
   });
   for (var i = 0, ii = cities.length; i < ii; i++) {
-    dataTest.addWord(cities[i].city, cities[i]);
+    dataTest.add(cities[i].city, cities[i]);
   }
 
   // register keypress handler to search trie
   $('#data-test').on('keyup focus', function() {
     var $input = $('#data-test')
       , val = $input.val()
-      , responses = dataTest.getPrefix(val)
+      , responses = dataTest.find(val)
       , $acList = $('#data-test-ac');
 
     if (responses) {
