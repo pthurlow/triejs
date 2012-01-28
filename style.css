@@ -35,7 +35,9 @@ header h1 span {
   font-size:13px;
   color:#999;
 }
-header a {
+header a,
+header a:visited,
+header a:hover {
   text-decoration:none;
   color:#333;
   display:inline-block;
