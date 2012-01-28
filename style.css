@@ -6,6 +6,15 @@ body {
   color:#333;
   text-shadow:1px 1px 0 #fff;
 }
+
+a, a:visited {
+  color:#0069D6;
+  text-decoration:none;
+}
+a:hover {
+  color:#00438A;
+  text-decoration:underline;
+}
 .content {
   width:900px;
   margin:0 auto;
@@ -251,14 +260,6 @@ h1 {
   display:inline-block;
 }
 
-a, a:visited {
-  color:#0069D6;
-  text-decoration:none;
-}
-a:hover {
-  color:#00438A;
-  text-decoration:underline;
-}
 footer {
   width:800px;
   margin:50px auto 0;
