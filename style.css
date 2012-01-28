@@ -26,6 +26,11 @@ header h1 span {
   font-size:13px;
   color:#999;
 }
+header a {
+  text-decoration:none;
+  color:#333;
+  display:inline-block;
+}
 .btn {
   display: inline-block;
   background-color: #E6E6E6;
