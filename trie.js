@@ -1,5 +1,5 @@
 /**
-* Copyright (C) 2011 Paul Thurlow
+* Copyright (C) 2012 Paul Thurlow
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy 
 * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
   * @decription Trie class for saving data by keywords accessible through
   *   word prefixes
   * @class
-  * @version 0.1.2
+  * @version 0.1.3
   */
   var Triejs = function(opts) {
 
@@ -178,7 +178,7 @@
     _addCacheData: function(curr, data) {
       if ((this.root === curr && !this.options.returnRoot) 
         || this.options.enableCache === false) {
-        return;
+        return false;
       }
       if (!curr.$d) {
         curr.$d = {};
@@ -186,6 +186,7 @@
       curr.$d = this.options.insert.call(this, curr.$d, data);
       this.options.sort.call(curr.$d);
       this.options.clip.call(curr.$d, this.options.maxCache);
+      return true;
     }
 
     /**
@@ -249,13 +250,25 @@
         data = this._getSubtree(node);
       }
       if (this.options.insertOrder) {
-        var temp = [];
-        for (var i = 0, ii = data.length; i < ii; i++) {
-          temp.push(data[i].d);
-        }
-        data = temp;
+        data = this._stripInsertOrder(data);
       }
       return data ? this.options.copy(data) : undefined;
+    }
+
+    /**
+    * @description Remove the outer data later that stores insert order
+    * @param data {Object} The data with insert order object wrapper
+    * @return {Array} data results without insert order wrapper
+    */
+    , _stripInsertOrder: function(data) {
+      if (typeof data == 'undefined') {
+        return;
+      }
+      var temp = [];
+      for (var i = 0, ii = data.length; i < ii; i++) {
+        temp.push(data[i].d);
+      }
+      return temp;
     }
 
     /**
@@ -264,13 +277,16 @@
     * @return {Object} data from the subtree
     */
     , _getSubtree: function(curr) {
-      var res = []
+      var res
         , nodeArray = [curr]
         , node;
       while (node = nodeArray.pop()) {
         for (var newNode in node) {
           if (node.hasOwnProperty(newNode)) {
             if (newNode == '$d') {
+              if (typeof res == 'undefined') {
+                res = [];
+              }
               res = this.options.merge.call(this, res, node.$d);
             } else if (newNode != '$s') {
               nodeArray.push(node[newNode]);
@@ -329,7 +345,10 @@
               // insert new data at current end of word node level
               this._addSuffix(letter, data, curr);
             } else {
-              this._addCacheData(curr[letter], data);
+              // either add to cache or just add the data at end of word node
+              if (!this._addCacheData(curr[letter], data)) {
+                this._addSuffix(letter, data, curr);
+              }
             }
           }
           curr = curr[letter];
@@ -380,6 +399,9 @@
         }
       }
       data = this.options.copy(curr.$d);
+      if (this.options.insertOrder) {
+        data = this._stripInsertOrder(data);
+      }
       delete curr.$d;
       delete curr.$s;
       // enumerate all child nodes
