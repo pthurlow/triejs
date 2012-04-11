@@ -60,9 +60,9 @@ Options are passed via the constructor as a hash like so:
 ##Testing
 
 The test suite is built using [Bob Remeika's foounit](https://github.com/foobarfighter/foounit) and can be tested in both the browser and in node.
-To test in node simple run the following command `node tests/vendor/suite.js` in the root directory or if Triejs was installed using `npm` then run `npm test triejs`
+To test in node simple run the following command `node tests/vendor/suite.js` in the root directory or if Triejs was installed using `npm` then run `npm test`
 
-To test in a browser you will need to `npm install foounit` and then run `foounit serve` in the root directory.  Then you can direct your browser
+To test in a browser you will need to `npm install` and then run `foounit serve` in the root directory.  Then you can direct your browser
 to `localhost:5057/tests/vendor/runner.html` to see the test suite run
 
 ##License
