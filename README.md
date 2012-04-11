@@ -1,4 +1,4 @@
-#Triejs
+#Triejs [![Build Status](https://secure.travis-ci.org/pthurlow/triejs.png)](http://travis-ci.org/pthurlow/triejs)
 A Javascript implementation of a trie data structure with an extensible data 
 model to easily customize to any need.  Visit the [Triejs page](http://pthurlow.github.com/triejs) for more info and technical details.
 
