@@ -13,6 +13,8 @@
   "contibutors": [],
   "dependencies": {
     "foounit": ""
+    , "cli-chart": ""
+    , "colors": ""
   },
   "scripts": {
     "test": "node tests/vendor/suite.js"

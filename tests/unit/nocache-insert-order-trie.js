@@ -83,6 +83,20 @@ describe('When using a trie with no cache and insert order', function (){
   });
 
   /**
+  * @description test adding multiple words
+  */
+  describe('and adding multiple words at once', function() {
+
+    before(function() {
+      trie.addAll([['test', 'word'],['testing', 'another word']]);
+    });
+
+    it('they exist in the trie in insert order', function (){
+      expect(trie.find('t')).to(equal, ['word', 'another word']);
+    });
+  });
+
+  /**
   * @description test removing identical words
   */
   describe('and removing identical words', function() {

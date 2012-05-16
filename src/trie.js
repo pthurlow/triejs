@@ -61,6 +61,11 @@
       , returnRoot: false
 
       /**
+      * @description Match on all substrings in words if space delimited
+      */
+      , matchSubstrings: false
+
+      /**
       * @description Insert function for adding new items to cache
       * @type {Function}
       */
@@ -298,6 +303,18 @@
       return res;
     }
 
+    /**
+    * @description helper function to determine an array type
+    * @param arr {Array} input to check for array type
+    * @return {Boolean} whether the input param is of type array
+    */
+    , _isArray: function (arr) {
+      return arr && typeof arr === 'object' &&
+        typeof arr.length === 'number' &&
+        typeof arr.splice === 'function' &&
+        !(arr.propertyIsEnumerable('length'));
+    }
+
     /*-------------------------------------------------------------------------
     * Public Functions
     -------------------------------------------------------------------------*/
@@ -306,9 +323,13 @@
     * @description Adds a word into the trie
     * @param word {String} word to add
     * @param data {Object} data to store under given term
+    * @return
     */
     , add: function(word, data) {
-      if (typeof word != 'string') { return false; }
+      // ignore input inproperly formatted
+      if (typeof word != 'string' && !this._isArray(word)) { return false; }
+      // add by array if passed as array
+      if (this._isArray(word)) { return this.addAll.apply(this, arguments); }
       if (arguments.length == 1) { data = word; }
       word = word.toLowerCase();
 
@@ -377,11 +398,33 @@
           curr = curr[letter];
         }
       }
+
+      // if matching on substrings, check for spaces and add substring as well
+      if (this.options.matchSubstrings && word.indexOf(' ') != -1) {
+        this.add(word.substring(word.indexOf(' ') + 1), data);
+      }
+    }
+
+    /**
+    * @description add items in an array to the trie all at once
+    * @param items {Array} list of word data pairs to add to the trie
+    * @return
+    */
+    , addAll: function(items) {
+      if (!this._isArray(items)) { return; }
+      for (var i = 0, ii = items.length; i < ii; i++) {
+        if (this._isArray(items[i])) {
+          this.add.apply(this, items[i]);
+        } else {
+          this.add.call(this, items[i]);
+        }
+      }
     }
 
     /**
     * @description remove a word from the trie if there is no caching
     * @param word {String} word to remove from the trie
+    * @return {Object|Array|Null} data being remove if any
     */
     , remove: function(word) {
       if (typeof word !== 'string' || word === '' || this.options.enableCache){
@@ -425,6 +468,9 @@
       }
       if (!count) {
         delete prev[prevLetter]; // nothing left at this level so remove it
+      }
+      if (this.options.matchSubstrings && word.indexOf(' ') != -1) {
+        this.remove(word.substring(word.indexOf(' ') + 1));
       }
       return data;
     }

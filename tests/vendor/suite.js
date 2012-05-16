@@ -25,7 +25,9 @@ try {
 
 
 foounit.getSuite().addFile(':unit/basic-trie');
+foounit.getSuite().addFile(':unit/basic-trie-substring');
 foounit.getSuite().addFile(':unit/nocache-trie');
+foounit.getSuite().addFile(':unit/nocache-trie-substring');
 foounit.getSuite().addFile(':unit/nocache-insert-order-trie');
 foounit.getSuite().addFile(':unit/custom-sort-trie');
 foounit.getSuite().addFile(':unit/nocache-object-trie');

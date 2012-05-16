@@ -5,11 +5,11 @@ var Triejs = foounit.require(':src/trie');
 * @description Test the default trie data implementation with
 *   arrays of data stored at each node level
 */
-describe('When using a default trie', function (){
+describe('When using a default trie with match on substring', function (){
   var trie;
 
   before(function (){
-    trie = new Triejs();
+    trie = new Triejs({ matchSubstrings: true });
   });
 
   after(function() {
@@ -17,31 +17,35 @@ describe('When using a default trie', function (){
   });
 
   /**
-  * @description test for adding single words
+  * @description test for adding single words with spaces
   */
-  describe('and adding a word', function() {
+  describe('and adding a word with spaces', function() {
 
     it('it exists in the trie', function (){
-      trie.add('test', 'word');
+      trie.add('test one', 'word');
       expect(trie.find('test')).to(equal, ['word']);
+      expect(trie.find('one')).to(equal, ['word']);
     });
 
     it('it can be retrieved by prefix', function (){
-      trie.add('test', 'word');
+      trie.add('test one', 'word');
       expect(trie.find('t')).to(equal, ['word']);
       expect(trie.find('te')).to(equal, ['word']);
       expect(trie.find('tes')).to(equal, ['word']);
+      expect(trie.find('o')).to(equal, ['word']);
+      expect(trie.find('on')).to(equal, ['word']);
     });
 
     it('it is not found when using incorrect prefix', function (){
-      trie.add('test', 'word');
+      trie.add('test one', 'word');
       expect(trie.find('wrong')).toNot(equal, ['word']);
       expect(trie.find('wrong')).to(beUndefined);
       expect(trie.find('testt')).to(beUndefined);
+      expect(trie.find('onee')).to(beUndefined);
     });
 
     it('it is not found when using non string prefix', function (){
-      trie.add('test', 'word');
+      trie.add('test one', 'word');
       expect(trie.find(true)).to(beUndefined);
       expect(trie.find(1)).to(beUndefined);
       expect(trie.find(function() {})).to(beUndefined);
@@ -51,70 +55,57 @@ describe('When using a default trie', function (){
 
     it('it is a copy and not the original variable', function (){
       var data = 'word';
-      trie.add('test', data);
+      trie.add('test one', data);
       data = 'wrong';
       expect(trie.find('t')).to(equal, ['word']);
-    });
-  });
-
-  /**
-  * @description test for invalid input to add function
-  */
-  describe('and adding a non string word', function() {
-
-    before(function() {
-      trie.add(1, 'word');
-      trie.add(false, 'word');
-      trie.add(function() {}, 'word');
-      trie.add(null, 'word');
-      trie.add(undefined, 'word');
-    });
-
-    it('it adds nothing to the trie', function (){
-      expect(trie.root).to(equal, {});
+      expect(trie.find('o')).to(equal, ['word']);
     });
   });
 
   /**
   * @description test for adding words as a single argument
   */
-  describe('and adding a word without data', function() {
+  describe('and adding a word without data with spaces', function() {
 
     before(function() {
-      trie.add('word');
+      trie.add('word test');
     });
 
     it('it adds the word as the data', function (){
-      expect(trie.find('w')).to(equal, ['word']);
+      expect(trie.find('w')).to(equal, ['word test']);
+      expect(trie.find('t')).to(equal, ['word test']);
     });
   });
 
   /**
   * @description test adding multiple words
   */
-  describe('and adding two words', function() {
+  describe('and adding two words with spaces', function() {
 
     before(function() {
-      trie.add('test', 'word');
-      trie.add('testing', 'another word');
+      trie.add('test one', 'word');
+      trie.add('testing this', 'another word');
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('t')).to(equal, ['another word', 'word']);
+      expect(trie.find('test')).to(equal, ['another word', 'word']);
+      expect(trie.find('t')).to(equal, ['another word', 'another word', 'word']);
     });
   });
 
   /**
-  * @description test adding multiple words at once
+  * @description test adding multiple words
   */
   describe('and adding multiple words at once', function() {
 
     before(function() {
-      trie.addAll([['test', 'word'],['testing', 'another word']]);
+      trie.addAll([['test one', 'word'],['testing two', 'another word']]);
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('t')).to(equal, ['another word', 'word']);
+      expect(trie.find('test')).to(equal, ['another word', 'word']);
+      expect(trie.find('one')).to(equal, ['word']);
+      expect(trie.find('tw')).to(equal, ['another word']);
     });
   });
 
@@ -124,11 +115,13 @@ describe('When using a default trie', function (){
   describe('and adding multiple words at once using original add function', function() {
 
     before(function() {
-      trie.add([['test', 'word'],['testing', 'another word']]);
+      trie.add([['test one', 'word'],['testing two', 'another word']]);
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('t')).to(equal, ['another word', 'word']);
+      expect(trie.find('test')).to(equal, ['another word', 'word']);
+      expect(trie.find('one')).to(equal, ['word']);
+      expect(trie.find('two')).to(equal, ['another word']);
     });
   });
 
@@ -138,11 +131,13 @@ describe('When using a default trie', function (){
   describe('and adding multiple words at once', function() {
 
     before(function() {
-      trie.addAll(['test', 'testing']);
+      trie.addAll(['test one', 'testing two']);
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('t')).to(equal, ['test', 'testing']);
+      expect(trie.find('test')).to(equal, ['test one', 'testing two']);
+      expect(trie.find('one')).to(equal, ['test one']);
+      expect(trie.find('two')).to(equal, ['testing two']);
     });
   });
 
@@ -152,11 +147,13 @@ describe('When using a default trie', function (){
   describe('and adding multiple words at once without data using original add function', function() {
 
     before(function() {
-      trie.add(['test','testing']);
+      trie.add(['test one','testing two']);
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('t')).to(equal, ['test', 'testing']);
+      expect(trie.find('test')).to(equal, ['test one', 'testing two']);
+      expect(trie.find('one')).to(equal, ['test one']);
+      expect(trie.find('two')).to(equal, ['testing two']);
     });
   });
 

@@ -326,6 +326,24 @@ describe('When using a trie with no cache', function (){
   });
 
   /**
+  * @description test adding multiple words
+  */
+  describe('and adding multiple words at once', function() {
+
+    before(function() {
+      trie.addAll([
+        ['one', {type:'person', name:'First', position: 1, id:0}]
+        ,['two', {type:'person', name:'Second', position: 2, id:1}]
+      ]);
+    });
+
+    it('they exist in the trie', function (){
+      expect(trie.find('one')).to(equal, {person: [{type:'person', name:'First', position: 1, id:0}]});
+      expect(trie.find('two')).to(equal, {person: [{type:'person', name:'Second', position: 2, id:1}]});
+    });
+  });
+
+  /**
   * @description test uppercase letters in words and with prefix fetching
   */
   describe('and adding a word with capitals', function() {
