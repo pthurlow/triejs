@@ -1,5 +1,6 @@
-foounit.require(':vendor/spec-helper');
-var Triejs = foounit.require(':src/trie');
+if (typeof window === 'undefined') {
+  var Triejs = require('../../src/trie.js');
+}
 
 /**
 * @description Test the cache disabled trie data implementation with
@@ -8,7 +9,7 @@ var Triejs = foounit.require(':src/trie');
 describe('When using a trie with no cache', function (){
   var trie;
 
-  before(function (){
+  beforeEach(function (){
     trie = new Triejs({
       enableCache: false
       , insert: function(target, data) {
@@ -62,7 +63,7 @@ describe('When using a trie with no cache', function (){
     });
   });
 
-  after(function() {
+  afterEach(function() {
     delete trie;
   });
 
@@ -71,37 +72,37 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding a word', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test', {type:'person', name:'Test', position: 0});
     })
 
     it('it exists in the trie', function (){
-      expect(trie.find('test')).to(equal, {'person': [{type:'person', name:'Test', position: 0}]});
+      expect(trie.find('test')).toEqual({'person': [{type:'person', name:'Test', position: 0}]});
     });
 
     it('it can be retrieved by prefix', function (){
-      expect(trie.find('t')).to(equal, {'person': [{type:'person', name:'Test', position: 0}]});
-      expect(trie.find('te')).to(equal, {'person': [{type:'person', name:'Test', position: 0}]});
-      expect(trie.find('tes')).to(equal, {'person': [{type:'person', name:'Test', position: 0}]});
+      expect(trie.find('t')).toEqual({'person': [{type:'person', name:'Test', position: 0}]});
+      expect(trie.find('te')).toEqual({'person': [{type:'person', name:'Test', position: 0}]});
+      expect(trie.find('tes')).toEqual({'person': [{type:'person', name:'Test', position: 0}]});
     });
 
     it('it is not found when using incorrect prefix', function (){
-      expect(trie.find('wrong')).toNot(equal, {'person': [{type:'person', name:'Test', position: 0}]});
-      expect(trie.find('wrong')).to(beUndefined);
-      expect(trie.find('testt')).to(beUndefined);
+      expect(trie.find('wrong')).not.toEqual({'person': [{type:'person', name:'Test', position: 0}]});
+      expect(trie.find('wrong')).toBeUndefined();
+      expect(trie.find('testt')).toBeUndefined();
     });
 
     it('it is not found when using non string prefix', function (){
-      expect(trie.find(true)).to(beUndefined);
-      expect(trie.find(1)).to(beUndefined);
-      expect(trie.find(function() {})).to(beUndefined);
-      expect(trie.find(null)).to(beUndefined);
-      expect(trie.find(undefined)).to(beUndefined);
+      expect(trie.find(true)).toBeUndefined();
+      expect(trie.find(1)).toBeUndefined();
+      expect(trie.find(function() {})).toBeUndefined();
+      expect(trie.find(null)).toBeUndefined();
+      expect(trie.find(undefined)).toBeUndefined();
     });
 
     it('it can be found using contains', function() {
-      expect(trie.contains('test')).to(be, true);
-      expect(trie.contains('t')).to(be, false);
+      expect(trie.contains('test')).toBe(true);
+      expect(trie.contains('t')).toBe(false);
     });
 
     /**
@@ -109,18 +110,18 @@ describe('When using a trie with no cache', function (){
     */
     describe('and removing the word', function() {
 
-      before(function() {
+      beforeEach(function() {
         trie.remove('test');
       });
 
       it('it is not in the trie', function() {
-        expect(trie.find('t')).to(beUndefined);
-        expect(trie.find('test')).to(beUndefined);
+        expect(trie.find('t')).toBeUndefined();
+        expect(trie.find('test')).toBeUndefined();
       });
 
       it('it cannot be found using contains', function() {
-        expect(trie.contains('test')).to(be, false);
-        expect(trie.contains('t')).to(be, false);
+        expect(trie.contains('test')).toBe(false);
+        expect(trie.contains('t')).toBe(false);
       });
     });
 
@@ -131,7 +132,7 @@ describe('When using a trie with no cache', function (){
       
       it('it is still in the trie', function() {
         trie.remove('te');
-        expect(trie.find('t')).to(equal, {'person': [{type:'person', name:'Test', position: 0}]});
+        expect(trie.find('t')).toEqual({'person': [{type:'person', name:'Test', position: 0}]});
       });
     });
   });
@@ -141,7 +142,7 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding a non string word', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add(1, {type:'person', name:'Test', position: 0});
       trie.add(false, {type:'person', name:'Test', position: 0});
       trie.add(function() {}, {type:'person', name:'Test', position: 0});
@@ -150,7 +151,7 @@ describe('When using a trie with no cache', function (){
     })
 
     it('it adds nothing to the trie', function (){
-      expect(trie.root).to(equal, {});
+      expect(trie.root).toEqual({});
     });
   });
 
@@ -159,13 +160,13 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding two similar words (first smaller)', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test', {type:'person', name:'Test', position: 1, id: 0});
       trie.add('testing', {type:'person', name:'More', position: 2, id: 1});
     })
 
     it('they exist in the trie', function (){
-      expect(trie.find('test')).to(equal, {
+      expect(trie.find('test')).toEqual({
         'person': [
           {type:'person', name:'Test', position: 1, id: 0}
           ,{type:'person', name:'More', position: 2, id: 1}]
@@ -173,10 +174,10 @@ describe('When using a trie with no cache', function (){
     });
 
     it('they are found using contains', function (){
-      expect(trie.contains('test')).to(be, true);
-      expect(trie.contains('testing')).to(be, true);
-      expect(trie.contains('tes')).to(be, false);
-      expect(trie.contains('testi')).to(be, false);
+      expect(trie.contains('test')).toBe(true);
+      expect(trie.contains('testing')).toBe(true);
+      expect(trie.contains('tes')).toBe(false);
+      expect(trie.contains('testi')).toBe(false);
     });
 
     /**
@@ -186,9 +187,9 @@ describe('When using a trie with no cache', function (){
 
       it('it no longer exists', function() {
         trie.remove('test');
-        expect(trie.find('tes')).to(equal, {'person': [{type:'person', name:'More', position: 2, id: 1}]});
-        expect(trie.find('test')).to(equal, {'person': [{type:'person', name:'More', position: 2, id: 1}]});
-        expect(trie.find('testi')).to(equal, {'person': [{type:'person', name:'More', position: 2, id: 1}]});
+        expect(trie.find('tes')).toEqual({'person': [{type:'person', name:'More', position: 2, id: 1}]});
+        expect(trie.find('test')).toEqual({'person': [{type:'person', name:'More', position: 2, id: 1}]});
+        expect(trie.find('testi')).toEqual({'person': [{type:'person', name:'More', position: 2, id: 1}]});
       });
     });
 
@@ -199,9 +200,9 @@ describe('When using a trie with no cache', function (){
 
       it('it no longer exists', function() {
         trie.remove('testing');
-        expect(trie.find('tes')).to(equal, {'person': [{type:'person', name:'Test', position: 1, id: 0}]});
-        expect(trie.find('test')).to(equal, {'person': [{type:'person', name:'Test', position: 1, id: 0}]});
-        expect(trie.find('testi')).to(beUndefined);
+        expect(trie.find('tes')).toEqual({'person': [{type:'person', name:'Test', position: 1, id: 0}]});
+        expect(trie.find('test')).toEqual({'person': [{type:'person', name:'Test', position: 1, id: 0}]});
+        expect(trie.find('testi')).toBeUndefined();
       });
     });
   });
@@ -211,13 +212,13 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding two similar words (second smaller)', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('abc', {type:'person', name:'First', position: 2, id: 0});
       trie.add('ab', {type:'person', name:'Second', position: 1, id: 1});
     })
 
     it('they exist in the trie', function (){
-      expect(trie.find('a')).to(equal, {
+      expect(trie.find('a')).toEqual({
         person: [
           {type:'person', name:'Second', position: 1, id: 1}
           , {type:'person', name:'First', position: 2, id: 0}
@@ -225,7 +226,7 @@ describe('When using a trie with no cache', function (){
       });
     });
     it('they can be accessed by completing the sub word', function() {
-      expect(trie.find('ab')).to(equal, {
+      expect(trie.find('ab')).toEqual({
         person: [
           {type:'person', name:'Second', position: 1, id: 1}
           , {type:'person', name:'First', position: 2, id: 0}
@@ -239,19 +240,19 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding two exact same words (different data)', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('one', {type:'person', name:'First', position: 1, id:0});
       trie.add('one', {type:'person', name:'Second', position: 2, id:1});
     });
 
     it('they exist in the trie', function () {
-      expect(trie.find('one')).to(equal, {
+      expect(trie.find('one')).toEqual({
         person: [
           {type:'person', name:'First', position: 1, id: 0}
           , {type:'person', name:'Second', position: 2, id: 1}
         ]
       });
-      expect(trie.find('onee')).to(beUndefined);
+      expect(trie.find('onee')).toBeUndefined();
     });
   });
 
@@ -260,19 +261,19 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding two exact same words (same data)', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('one', {type:'person', name:'First', position: 1, id:1});
       trie.add('one', {type:'person', name:'First', position: 1, id:1});
     });
 
     it('they exist in the trie', function () {
-      expect(trie.find('one')).to(equal, {
+      expect(trie.find('one')).toEqual({
         person: [
           {type:'person', name:'First', position: 1, id: 1}
           , {type:'person', name:'First', position: 1, id: 1}
         ]
       });
-      expect(trie.find('onee')).to(beUndefined);
+      expect(trie.find('onee')).toBeUndefined();
     });
   });
 
@@ -282,7 +283,7 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding to exact same words (different data) with all prefix letters stored', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('o', {type:'person', name:'Invalid', position: 3, id:2});
       trie.add('on', {type:'person', name:'Invlid', position: 4, id:3});
       trie.add('one', {type:'person', name:'First', position: 1, id:0});
@@ -290,7 +291,7 @@ describe('When using a trie with no cache', function (){
     });
 
     it('they exist in the trie', function () {
-      expect(trie.find('one')).to(equal, {
+      expect(trie.find('one')).toEqual({
         person: [
           {type:'person', name:'First', position: 1, id: 0}
           , {type:'person', name:'Second', position: 2, id: 1}
@@ -304,24 +305,24 @@ describe('When using a trie with no cache', function (){
   */
   describe('and removing two identical words (different data)', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('one', {type:'person', name:'First', position: 1, id:0});
       trie.add('one', {type:'person', name:'Second', position: 2, id:1});
     });
 
     it('they are returned when removed', function() {
-      expect(trie.remove('one')).to(equal, {person:
+      expect(trie.remove('one')).toEqual({person:
         [{type:'person', name:'First', position: 1, id:0}, {type:'person', name:'Second', position:2, id:1}]
       });
     });
 
     it('they are not in the trie', function() {
       trie.remove('one');
-      expect(trie.find('o')).to(beUndefined);
+      expect(trie.find('o')).toBeUndefined();
     });
     it('they are not contained in the trie', function() {
       trie.remove('one');
-      expect(trie.contains('one')).to(be, false);
+      expect(trie.contains('one')).toBe(false);
     });
   });
 
@@ -330,7 +331,7 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding multiple words at once', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.addAll([
         ['one', {type:'person', name:'First', position: 1, id:0}]
         ,['two', {type:'person', name:'Second', position: 2, id:1}]
@@ -338,8 +339,8 @@ describe('When using a trie with no cache', function (){
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('one')).to(equal, {person: [{type:'person', name:'First', position: 1, id:0}]});
-      expect(trie.find('two')).to(equal, {person: [{type:'person', name:'Second', position: 2, id:1}]});
+      expect(trie.find('one')).toEqual({person: [{type:'person', name:'First', position: 1, id:0}]});
+      expect(trie.find('two')).toEqual({person: [{type:'person', name:'Second', position: 2, id:1}]});
     });
   });
 
@@ -348,15 +349,15 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding a word with capitals', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('Test', {type:'person', name:'First', position: 2, id: 0});
     })
 
     it('it can be found in the trie', function (){
-      expect(trie.find('test')).to(equal, {person: [{type:'person', name:'First', position: 2, id: 0}]});
+      expect(trie.find('test')).toEqual({person: [{type:'person', name:'First', position: 2, id: 0}]});
     });
     it('it can be found in the trie with capitals', function (){
-      expect(trie.find('Test')).to(equal, {person: [{type:'person', name:'First', position: 2, id: 0}]});
+      expect(trie.find('Test')).toEqual({person: [{type:'person', name:'First', position: 2, id: 0}]});
     });
   });
 
@@ -365,14 +366,14 @@ describe('When using a trie with no cache', function (){
   */
   describe('and modifying an added word', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test', {type:'person', name:'First', position: 2, id: 0});
     })
 
     it('it does not modify the word in the tree', function (){
       var words = trie.find('test');
       words.person[0] = {type:'person', name:'Stuff', position: 3, id: 1};
-      expect(trie.find('test')).to(equal, {person: [{type:'person', name:'First', position: 2, id: 0}]});
+      expect(trie.find('test')).toEqual({person: [{type:'person', name:'First', position: 2, id: 0}]});
     });
   });
 
@@ -381,12 +382,12 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding a word with unicode characters', function() {
 
-    before(function() {
-      trie.add('test\u0B9x\u0D9x\u091x', {type:'person', name:'First', position: 2, id: 0});
+    beforeEach(function() {
+      trie.add('test'+String.fromCharCode(0x3050)+String.fromCharCode(0x3051)+String.fromCharCode(0x3052), {type:'person', name:'First', position: 2, id: 0});
     })
 
     it('it is found in the trie', function (){
-      expect(trie.find('test\u0B9x')).to(equal, {person: [{type:'person', name:'First', position: 2, id: 0}]});
+      expect(trie.find('test'+String.fromCharCode(0x3050))).toEqual({person: [{type:'person', name:'First', position: 2, id: 0}]});
     });
   });
 
@@ -395,13 +396,13 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding a word with unicode characters and splitting on unicode chars', function() {
 
-    before(function() {
-      trie.add('test\u0B9x\u0D9x\u091x', {type:'person', name:'First', position: 2, id: 0});
-      trie.add('test\u0B9x\u0D9x', {type:'person', name:'Second', position: 3, id: 1});
+    beforeEach(function() {
+      trie.add('test'+String.fromCharCode(0x3050)+String.fromCharCode(0x3051)+String.fromCharCode(0x3052), {type:'person', name:'First', position: 2, id: 0});
+      trie.add('test'+String.fromCharCode(0x3050)+String.fromCharCode(0x3051), {type:'person', name:'Second', position: 3, id: 1});
     })
 
     it('it is found in the trie', function (){
-      expect(trie.find('test\u0B9x')).to(equal, {
+      expect(trie.find('test'+String.fromCharCode(0x3050))).toEqual({
         person: [
           {type:'person', name:'First', position: 2, id: 0}
           , {type:'person', name:'Second', position: 3, id: 1}
@@ -415,21 +416,21 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding multiple words', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('testing', {type:'person', name:'testing', position: 0, id: 0});
       trie.add('test three', {type:'person', name:'test three', position: 1, id: 1});
       trie.add('test', {type:'person', name:'test', position: 2, id: 2});
     })
 
     it('it returns all in position order when requesting by similar prefix', function (){
-      expect(trie.find('t')).to(equal, {person: [
+      expect(trie.find('t')).toEqual({person: [
         {type:'person', name:'testing', position: 0, id: 0}
         , {type:'person', name:'test three', position: 1, id: 1}
         , {type:'person', name:'test', position: 2, id: 2}
       ]});
     });
     it('it returns an exact text match before any prefix matches', function (){
-      expect(trie.find('test')).to(equal, {person: [
+      expect(trie.find('test')).toEqual({person: [
         {type:'person', name:'test', position: 2, id: 2}
         , {type:'person', name:'testing', position: 0, id: 0}
         , {type:'person', name:'test three', position: 1, id: 1}
@@ -442,7 +443,7 @@ describe('When using a trie with no cache', function (){
   */
   describe('and adding more words than the cache', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('testone',    {type:'person', name:'one',    position: 1, id: 0});
       trie.add('testtwo',    {type:'person', name:'two',    position: 2, id: 1});
       trie.add('testthree',  {type:'person', name:'three',  position: 3, id: 2});
@@ -457,7 +458,7 @@ describe('When using a trie with no cache', function (){
     })
 
     it('it only returns the max number of results', function (){
-      expect(trie.find('t')).to(equal, {
+      expect(trie.find('t')).toEqual({
         person: [
           {type:'person', name:'one',    position: 1, id: 0}
           , {type:'person', name:'two',    position: 2, id: 1}

@@ -1,5 +1,6 @@
-foounit.require(':vendor/spec-helper');
-var Triejs = foounit.require(':src/trie');
+if (typeof window === 'undefined') {
+  var Triejs = require('../../src/trie.js');
+}
 
 /**
 * @description Test the default trie data implementation with
@@ -8,11 +9,11 @@ var Triejs = foounit.require(':src/trie');
 describe('When using a default trie', function (){
   var trie;
 
-  before(function (){
+  beforeEach(function (){
     trie = new Triejs();
   });
 
-  after(function() {
+  afterEach(function() {
     delete trie;
   });
 
@@ -23,37 +24,37 @@ describe('When using a default trie', function (){
 
     it('it exists in the trie', function (){
       trie.add('test', 'word');
-      expect(trie.find('test')).to(equal, ['word']);
+      expect(trie.find('test')).toEqual(['word']);
     });
 
     it('it can be retrieved by prefix', function (){
       trie.add('test', 'word');
-      expect(trie.find('t')).to(equal, ['word']);
-      expect(trie.find('te')).to(equal, ['word']);
-      expect(trie.find('tes')).to(equal, ['word']);
+      expect(trie.find('t')).toEqual(['word']);
+      expect(trie.find('te')).toEqual(['word']);
+      expect(trie.find('tes')).toEqual(['word']);
     });
 
     it('it is not found when using incorrect prefix', function (){
       trie.add('test', 'word');
-      expect(trie.find('wrong')).toNot(equal, ['word']);
-      expect(trie.find('wrong')).to(beUndefined);
-      expect(trie.find('testt')).to(beUndefined);
+      expect(trie.find('wrong')).not.toEqual(['word']);
+      expect(trie.find('wrong')).toBeUndefined();
+      expect(trie.find('testt')).toBeUndefined();
     });
 
     it('it is not found when using non string prefix', function (){
       trie.add('test', 'word');
-      expect(trie.find(true)).to(beUndefined);
-      expect(trie.find(1)).to(beUndefined);
-      expect(trie.find(function() {})).to(beUndefined);
-      expect(trie.find(null)).to(beUndefined);
-      expect(trie.find(undefined)).to(beUndefined);
+      expect(trie.find(true)).toBeUndefined();
+      expect(trie.find(1)).toBeUndefined();
+      expect(trie.find(function() {})).toBeUndefined();
+      expect(trie.find(null)).toBeUndefined();
+      expect(trie.find(undefined)).toBeUndefined();
     });
 
     it('it is a copy and not the original variable', function (){
       var data = 'word';
       trie.add('test', data);
       data = 'wrong';
-      expect(trie.find('t')).to(equal, ['word']);
+      expect(trie.find('t')).toEqual(['word']);
     });
   });
 
@@ -62,7 +63,7 @@ describe('When using a default trie', function (){
   */
   describe('and adding a non string word', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add(1, 'word');
       trie.add(false, 'word');
       trie.add(function() {}, 'word');
@@ -71,7 +72,7 @@ describe('When using a default trie', function (){
     });
 
     it('it adds nothing to the trie', function (){
-      expect(trie.root).to(equal, {});
+      expect(trie.root).toEqual({});
     });
   });
 
@@ -80,12 +81,12 @@ describe('When using a default trie', function (){
   */
   describe('and adding a word without data', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('word');
     });
 
     it('it adds the word as the data', function (){
-      expect(trie.find('w')).to(equal, ['word']);
+      expect(trie.find('w')).toEqual(['word']);
     });
   });
 
@@ -94,13 +95,13 @@ describe('When using a default trie', function (){
   */
   describe('and adding two words', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test', 'word');
       trie.add('testing', 'another word');
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('t')).to(equal, ['another word', 'word']);
+      expect(trie.find('t')).toEqual(['another word', 'word']);
     });
   });
 
@@ -109,12 +110,12 @@ describe('When using a default trie', function (){
   */
   describe('and adding multiple words at once', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.addAll([['test', 'word'],['testing', 'another word']]);
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('t')).to(equal, ['another word', 'word']);
+      expect(trie.find('t')).toEqual(['another word', 'word']);
     });
   });
 
@@ -123,12 +124,12 @@ describe('When using a default trie', function (){
   */
   describe('and adding multiple words at once using original add function', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add([['test', 'word'],['testing', 'another word']]);
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('t')).to(equal, ['another word', 'word']);
+      expect(trie.find('t')).toEqual(['another word', 'word']);
     });
   });
 
@@ -137,12 +138,12 @@ describe('When using a default trie', function (){
   */
   describe('and adding multiple words at once', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.addAll(['test', 'testing']);
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('t')).to(equal, ['test', 'testing']);
+      expect(trie.find('t')).toEqual(['test', 'testing']);
     });
   });
 
@@ -151,12 +152,12 @@ describe('When using a default trie', function (){
   */
   describe('and adding multiple words at once without data using original add function', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add(['test','testing']);
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('t')).to(equal, ['test', 'testing']);
+      expect(trie.find('t')).toEqual(['test', 'testing']);
     });
   });
 
@@ -165,16 +166,16 @@ describe('When using a default trie', function (){
   */
   describe('and adding two identical words', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test', 'word');
       trie.add('test', 'another word');
     });
 
     it('they exist in the trie', function () {
-      expect(trie.find('test')).to(equal, ['another word', 'word']);
+      expect(trie.find('test')).toEqual(['another word', 'word']);
     });
     it('they share the same substring', function () {
-      expect(trie.root).to(equal, {t:{'$s': 'est', '$d': ['another word', 'word']}});
+      expect(trie.root).toEqual({t:{'$s': 'est', '$d': ['another word', 'word']}});
     });
   });
 
@@ -183,17 +184,17 @@ describe('When using a default trie', function (){
   */
   describe('and adding three identical words', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test', 'word');
       trie.add('test', 'word');
       trie.add('test', 'word');
     });
 
     it('they exist in the trie', function () {
-      expect(trie.find('test')).to(equal, ['word', 'word', 'word']);
+      expect(trie.find('test')).toEqual(['word', 'word', 'word']);
     });
     it('they don\'t add excess letters in the trie', function () {
-      expect(trie.find('testt')).to(beUndefined);
+      expect(trie.find('testt')).toBeUndefined();
     });
   });
 
@@ -203,15 +204,15 @@ describe('When using a default trie', function (){
   */
   describe('and adding a word with capitals', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('Test', 'word');
     });
 
     it('it can be found in the trie', function (){
-      expect(trie.find('test')).to(equal, ['word']);
+      expect(trie.find('test')).toEqual(['word']);
     });
     it('it can be found in the trie with capitals', function (){
-      expect(trie.find('Test')).to(equal, ['word']);
+      expect(trie.find('Test')).toEqual(['word']);
     });
   });
 
@@ -220,14 +221,14 @@ describe('When using a default trie', function (){
   */
   describe('and modifying an added word', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test', 'word');
     });
 
     it('it does not modify the word in the tree', function (){
       var words = trie.find('test');
       words[0] = 'new';
-      expect(trie.find('test')).to(equal, ['word']);
+      expect(trie.find('test')).toEqual(['word']);
     });
   });
 
@@ -236,12 +237,12 @@ describe('When using a default trie', function (){
   */
   describe('and adding a word with unicode characters', function() {
 
-    before(function() {
-      trie.add('test\u0B9x\u0D9x\u091x', 'word');
+    beforeEach(function() {
+      trie.add('test'+String.fromCharCode(0x3050)+String.fromCharCode(0x3051)+String.fromCharCode(0x3052), 'word');
     })
 
     it('it is found in the trie', function (){
-      expect(trie.find('test\u0B9x')).to(equal, ['word']);
+      expect(trie.find('test'+String.fromCharCode(0x3050))).toEqual(['word']);
     });
   });
 
@@ -250,13 +251,13 @@ describe('When using a default trie', function (){
   */
   describe('and adding a word with unicode characters and splitting on unicode chars', function() {
 
-    before(function() {
-      trie.add('test\u0B9x\u0D9x\u091x', 'word');
-      trie.add('test\u0B9x\u0D9x', 'another word');
+    beforeEach(function() {
+      trie.add('test'+String.fromCharCode(0x3050)+String.fromCharCode(0x3051)+String.fromCharCode(0x3052), 'word');
+      trie.add('test'+String.fromCharCode(0x3050)+String.fromCharCode(0x3051), 'another word');
     })
 
     it('it is found in the trie', function (){
-      expect(trie.find('test\u0B9x')).to(equal, ['another word','word']);
+      expect(trie.find('test'+String.fromCharCode(0x3050))).toEqual(['another word','word']);
     });
   });
 
@@ -265,7 +266,7 @@ describe('When using a default trie', function (){
   */
   describe('and adding more words than the cache', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('testone', 'one');
       trie.add('testtwo', 'two');
       trie.add('testthree', 'three');
@@ -280,9 +281,8 @@ describe('When using a default trie', function (){
     })
 
     it('it only returns the max number of results', function (){
-      expect(trie.find('t')).to(
-        equal
-        , ['eight','eleven','five','four','nine','one','seven','six','ten','three']);
+      expect(trie.find('t')).toEqual(
+        ['eight','eleven','five','four','nine','one','seven','six','ten','three']);
     });
   });
 });

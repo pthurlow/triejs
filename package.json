@@ -12,12 +12,12 @@
   "homepage": "http://pthurlow.github.com/triejs",
   "contibutors": [],
   "dependencies": {
-    "foounit": ""
+    "jasmine-node": ""
     , "cli-chart": ""
     , "colors": ""
   },
   "scripts": {
-    "test": "node tests/vendor/suite.js"
+    "test": "jasmine-node tests/unit/"
   },
   "main": "src/trie.js",
   "repository": {

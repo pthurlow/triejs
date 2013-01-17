@@ -1,5 +1,6 @@
-foounit.require(':vendor/spec-helper');
-var Triejs = foounit.require(':src/trie');
+if (typeof window === 'undefined') {
+  var Triejs = require('../../src/trie.js');
+}
 
 /**
 * @description Test the cache disabled trie data implementation with
@@ -8,11 +9,11 @@ var Triejs = foounit.require(':src/trie');
 describe('When using a trie with no cache with substrings', function (){
   var trie;
 
-  before(function (){
+  beforeEach(function (){
     trie = new Triejs({ enableCache: false, matchSubstrings: true});
   });
 
-  after(function() {
+  afterEach(function() {
     delete trie;
   });
 
@@ -21,44 +22,44 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding a word', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test word', 'word');
     })
 
     it('it exists in the trie', function (){
-      expect(trie.find('test')).to(equal, ['word']);
-      expect(trie.find('word')).to(equal, ['word']);
+      expect(trie.find('test')).toEqual(['word']);
+      expect(trie.find('word')).toEqual(['word']);
     });
 
     it('it can be retrieved by prefix', function (){
-      expect(trie.find('t')).to(equal, ['word']);
-      expect(trie.find('te')).to(equal, ['word']);
-      expect(trie.find('tes')).to(equal, ['word']);
-      expect(trie.find('w')).to(equal, ['word']);
-      expect(trie.find('wo')).to(equal, ['word']);
-      expect(trie.find('wor')).to(equal, ['word']);
+      expect(trie.find('t')).toEqual(['word']);
+      expect(trie.find('te')).toEqual(['word']);
+      expect(trie.find('tes')).toEqual(['word']);
+      expect(trie.find('w')).toEqual(['word']);
+      expect(trie.find('wo')).toEqual(['word']);
+      expect(trie.find('wor')).toEqual(['word']);
     });
 
     it('it is not found when using incorrect prefix', function (){
-      expect(trie.find('wrong')).toNot(equal, ['word']);
-      expect(trie.find('wrong')).to(beUndefined);
-      expect(trie.find('testt')).to(beUndefined);
-      expect(trie.find('wordd')).to(beUndefined);
+      expect(trie.find('wrong')).not.toEqual(['word']);
+      expect(trie.find('wrong')).toBeUndefined();
+      expect(trie.find('testt')).toBeUndefined();
+      expect(trie.find('wordd')).toBeUndefined();
     });
 
     it('it is not found when using non string prefix', function (){
-      expect(trie.find(true)).to(beUndefined);
-      expect(trie.find(1)).to(beUndefined);
-      expect(trie.find(function() {})).to(beUndefined);
-      expect(trie.find(null)).to(beUndefined);
-      expect(trie.find(undefined)).to(beUndefined);
+      expect(trie.find(true)).toBeUndefined();
+      expect(trie.find(1)).toBeUndefined();
+      expect(trie.find(function() {})).toBeUndefined();
+      expect(trie.find(null)).toBeUndefined();
+      expect(trie.find(undefined)).toBeUndefined();
     });
 
     it('it can be found using contains', function() {
-      expect(trie.contains('test word')).to(be, true);
-      expect(trie.contains('t')).to(be, false);
-      expect(trie.contains('word')).to(be, true);
-      expect(trie.contains('w')).to(be, false);
+      expect(trie.contains('test word')).toBe(true);
+      expect(trie.contains('t')).toBe(false);
+      expect(trie.contains('word')).toBe(true);
+      expect(trie.contains('w')).toBe(false);
     });
 
     /**
@@ -66,22 +67,22 @@ describe('When using a trie with no cache with substrings', function (){
     */
     describe('and removing the word', function() {
 
-      before(function() {
+      beforeEach(function() {
         trie.remove('test word');
       });
 
       it('it is not in the trie', function() {
-        expect(trie.find('t')).to(beUndefined);
-        expect(trie.find('test')).to(beUndefined);
-        expect(trie.find('w')).to(beUndefined);
-        expect(trie.find('word')).to(beUndefined);
+        expect(trie.find('t')).toBeUndefined();
+        expect(trie.find('test')).toBeUndefined();
+        expect(trie.find('w')).toBeUndefined();
+        expect(trie.find('word')).toBeUndefined();
       });
 
       it('it cannot be found using contains', function() {
-        expect(trie.contains('test word')).to(be, false);
-        expect(trie.contains('t')).to(be, false);
-        expect(trie.contains('word')).to(be, false);
-        expect(trie.contains('w')).to(be, false);
+        expect(trie.contains('test word')).toBe(false);
+        expect(trie.contains('t')).toBe(false);
+        expect(trie.contains('word')).toBe(false);
+        expect(trie.contains('w')).toBe(false);
       });
     });
 
@@ -92,7 +93,7 @@ describe('When using a trie with no cache with substrings', function (){
       
       it('it is still in the trie', function() {
         trie.remove('te');
-        expect(trie.find('t')).to(equal, ['word']);
+        expect(trie.find('t')).toEqual(['word']);
       });
     });
   });
@@ -102,7 +103,7 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding a non string word', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add(1, 'word');
       trie.add(false, 'word');
       trie.add(function() {}, 'word');
@@ -111,7 +112,7 @@ describe('When using a trie with no cache with substrings', function (){
     })
 
     it('it adds nothing to the trie', function (){
-      expect(trie.root).to(equal, {});
+      expect(trie.root).toEqual({});
     });
   });
 
@@ -120,13 +121,13 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding a word without data', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test word');
     })
 
     it('it adds the word as the data', function (){
-      expect(trie.find('w')).to(equal, ['test word']);
-      expect(trie.find('t')).to(equal, ['test word']);
+      expect(trie.find('w')).toEqual(['test word']);
+      expect(trie.find('t')).toEqual(['test word']);
     });
   });
 
@@ -135,24 +136,24 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding two words', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test one', 'word');
       trie.add('testing two', 'another word');
     })
 
     it('they exist in the trie', function (){
-      expect(trie.find('test')).to(equal, ['another word', 'word']);
-      expect(trie.find('one')).to(equal, ['word']);
-      expect(trie.find('two')).to(equal, ['another word']);
+      expect(trie.find('test')).toEqual(['another word', 'word']);
+      expect(trie.find('one')).toEqual(['word']);
+      expect(trie.find('two')).toEqual(['another word']);
     });
 
     it('they are found using contains', function (){
-      expect(trie.contains('test one')).to(be, true);
-      expect(trie.contains('testing two')).to(be, true);
-      expect(trie.contains('one')).to(be, true);
-      expect(trie.contains('two')).to(be, true);
-      expect(trie.contains('tes')).to(be, false);
-      expect(trie.contains('testi')).to(be, false);
+      expect(trie.contains('test one')).toBe(true);
+      expect(trie.contains('testing two')).toBe(true);
+      expect(trie.contains('one')).toBe(true);
+      expect(trie.contains('two')).toBe(true);
+      expect(trie.contains('tes')).toBe(false);
+      expect(trie.contains('testi')).toBe(false);
     });
 
     /**
@@ -162,9 +163,9 @@ describe('When using a trie with no cache with substrings', function (){
 
       it('it no longer exists', function() {
         trie.remove('test one');
-        expect(trie.find('tes')).to(equal, ['another word']);
-        expect(trie.find('test')).to(equal, ['another word']);
-        expect(trie.find('testi')).to(equal, ['another word']);
+        expect(trie.find('tes')).toEqual(['another word']);
+        expect(trie.find('test')).toEqual(['another word']);
+        expect(trie.find('testi')).toEqual(['another word']);
       });
     });
 
@@ -175,9 +176,9 @@ describe('When using a trie with no cache with substrings', function (){
 
       it('it no longer exists', function() {
         trie.remove('testing two');
-        expect(trie.find('tes')).to(equal, ['word']);
-        expect(trie.find('test')).to(equal, ['word']);
-        expect(trie.find('testi')).to(beUndefined);
+        expect(trie.find('tes')).toEqual(['word']);
+        expect(trie.find('test')).toEqual(['word']);
+        expect(trie.find('testi')).toBeUndefined();
       });
     });
   });
@@ -187,13 +188,13 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding two words', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('abc', 'another word');
       trie.add('ab', 'word');
     })
 
     it('they exist in the trie', function (){
-      expect(trie.find('a')).to(equal, ['another word', 'word']);
+      expect(trie.find('a')).toEqual(['another word', 'word']);
     });
   });
 
@@ -202,14 +203,14 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding multiple words at once', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.addAll([['test one', 'word'],['testing two', 'another word']]);
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('test')).to(equal, ['another word', 'word']);
-      expect(trie.find('one')).to(equal, ['word']);
-      expect(trie.find('tw')).to(equal, ['another word']);
+      expect(trie.find('test')).toEqual(['another word', 'word']);
+      expect(trie.find('one')).toEqual(['word']);
+      expect(trie.find('tw')).toEqual(['another word']);
     });
   });
 
@@ -218,14 +219,14 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding multiple words at once using original add function', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add([['test one', 'word'],['testing two', 'another word']]);
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('test')).to(equal, ['another word', 'word']);
-      expect(trie.find('one')).to(equal, ['word']);
-      expect(trie.find('two')).to(equal, ['another word']);
+      expect(trie.find('test')).toEqual(['another word', 'word']);
+      expect(trie.find('one')).toEqual(['word']);
+      expect(trie.find('two')).toEqual(['another word']);
     });
   });
 
@@ -234,14 +235,14 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding multiple words at once', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.addAll(['test one', 'testing two']);
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('test')).to(equal, ['test one', 'testing two']);
-      expect(trie.find('one')).to(equal, ['test one']);
-      expect(trie.find('two')).to(equal, ['testing two']);
+      expect(trie.find('test')).toEqual(['test one', 'testing two']);
+      expect(trie.find('one')).toEqual(['test one']);
+      expect(trie.find('two')).toEqual(['testing two']);
     });
   });
 
@@ -250,14 +251,14 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding multiple words at once without data using original add function', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add(['test one','testing two']);
     });
 
     it('they exist in the trie', function (){
-      expect(trie.find('test')).to(equal, ['test one', 'testing two']);
-      expect(trie.find('one')).to(equal, ['test one']);
-      expect(trie.find('two')).to(equal, ['testing two']);
+      expect(trie.find('test')).toEqual(['test one', 'testing two']);
+      expect(trie.find('one')).toEqual(['test one']);
+      expect(trie.find('two')).toEqual(['testing two']);
     });
   });
 
@@ -265,14 +266,14 @@ describe('When using a trie with no cache with substrings', function (){
   * @description test adding indentical words
   */
   describe('and adding two identical words', function() {
-    before(function() {
+    beforeEach(function() {
       trie.add('one two', 'word');
       trie.add('one two', 'another word');
     });
 
     it('they exist in the trie', function() {
-      expect(trie.find('o')).to(equal, ['another word', 'word']);
-      expect(trie.find('onee')).to(beUndefined);
+      expect(trie.find('o')).toEqual(['another word', 'word']);
+      expect(trie.find('onee')).toBeUndefined();
     });
   });
 
@@ -281,23 +282,23 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and removing two identical words', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('one two', 'word');
       trie.add('one two', 'another word');
     });
 
     it('they are both returned', function() {
-      expect(trie.remove('one two')).to(equal, ['another word', 'word']);
+      expect(trie.remove('one two')).toEqual(['another word', 'word']);
     });
     it('they are both removed', function() {
       trie.remove('one two');
-      expect(trie.find('o')).to(beUndefined);
-      expect(trie.find('t')).to(beUndefined);
+      expect(trie.find('o')).toBeUndefined();
+      expect(trie.find('t')).toBeUndefined();
     });
     it('they are not contained', function() {
       trie.remove('one two');
-      expect(trie.contains('one two')).to(be, false);
-      expect(trie.contains('two')).to(be, false);
+      expect(trie.contains('one two')).toBe(false);
+      expect(trie.contains('two')).toBe(false);
     });
   });
 
@@ -306,7 +307,7 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding two exact same words (different data) with all prefix letters stored', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('o', 'word one');
       trie.add('on', 'word two');
       trie.add('one', 'word b');
@@ -315,8 +316,8 @@ describe('When using a trie with no cache with substrings', function (){
     });
 
     it('they exist in the trie', function () {
-      expect(trie.find('one')).to(equal, ['word a', 'word b', 'word d']);
-      expect(trie.find('t')).to(equal, ['word d']);
+      expect(trie.find('one')).toEqual(['word a', 'word b', 'word d']);
+      expect(trie.find('t')).toEqual(['word d']);
     });
   });
 
@@ -324,16 +325,16 @@ describe('When using a trie with no cache with substrings', function (){
   * @description test adding three indentical words
   */
   describe('and adding three identical words', function() {
-    before(function() {
+    beforeEach(function() {
       trie.add('one two', 'word');
       trie.add('one two', 'another word');
       trie.add('one two', 'third word');
     });
 
     it('they exist in the trie', function() {
-      expect(trie.find('o')).to(equal, ['another word', 'third word', 'word']);
-      expect(trie.find('t')).to(equal, ['another word', 'third word', 'word']);
-      expect(trie.find('onee')).to(beUndefined);
+      expect(trie.find('o')).toEqual(['another word', 'third word', 'word']);
+      expect(trie.find('t')).toEqual(['another word', 'third word', 'word']);
+      expect(trie.find('onee')).toBeUndefined();
     });
   });
 
@@ -343,17 +344,17 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding a word with capitals', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('Test One', 'word');
     })
 
     it('it can be found in the trie', function (){
-      expect(trie.find('test')).to(equal, ['word']);
-      expect(trie.find('one')).to(equal, ['word']);
+      expect(trie.find('test')).toEqual(['word']);
+      expect(trie.find('one')).toEqual(['word']);
     });
     it('it can be found in the trie with capitals', function (){
-      expect(trie.find('Test')).to(equal, ['word']);
-      expect(trie.find('One')).to(equal, ['word']);
+      expect(trie.find('Test')).toEqual(['word']);
+      expect(trie.find('One')).toEqual(['word']);
     });
   });
 
@@ -362,14 +363,14 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and modifying an added word', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test one', 'word');
     })
 
     it('it does not modify the word in the tree', function (){
       var words = trie.find('one');
       words[0] = 'new';
-      expect(trie.find('one')).to(equal, ['word']);
+      expect(trie.find('one')).toEqual(['word']);
     });
   });
 
@@ -378,13 +379,13 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding a word with unicode characters', function() {
 
-    before(function() {
-      trie.add('test \u0B9x\u0D9x\u091x', 'word');
+    beforeEach(function() {
+      trie.add('test '+String.fromCharCode(0x3050)+String.fromCharCode(0x3051)+String.fromCharCode(0x3052), 'word');
     })
 
     it('it is found in the trie', function (){
-      expect(trie.find('test \u0B9x')).to(equal, ['word']);
-      expect(trie.find('\u0B9x')).to(equal, ['word']);
+      expect(trie.find('test '+String.fromCharCode(0x3050))).toEqual(['word']);
+      expect(trie.find(String.fromCharCode(0x3050))).toEqual(['word']);
     });
   });
 
@@ -393,14 +394,14 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding a word with unicode characters and splitting on unicode chars', function() {
 
-    before(function() {
-      trie.add('test \u0B9x\u0D9x\u091x', 'word');
-      trie.add('test \u0B9x\u0D9x', 'another word');
+    beforeEach(function() {
+      trie.add('test '+String.fromCharCode(0x3050)+String.fromCharCode(0x3051)+String.fromCharCode(0x3052), 'word');
+      trie.add('test '+String.fromCharCode(0x3050)+String.fromCharCode(0x3051), 'another word');
     })
 
     it('it is found in the trie', function (){
-      expect(trie.find('test \u0B9x')).to(equal, ['another word','word']);
-      expect(trie.find('\u0B9x')).to(equal, ['another word','word']);
+      expect(trie.find('test '+String.fromCharCode(0x3050))).toEqual(['another word','word']);
+      expect(trie.find(String.fromCharCode(0x3050))).toEqual(['another word','word']);
     });
   });
 
@@ -409,7 +410,7 @@ describe('When using a trie with no cache with substrings', function (){
   */
   describe('and adding more words than the cache', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test one', 'one');
       trie.add('test two', 'two');
       trie.add('test three', 'three');
@@ -424,9 +425,8 @@ describe('When using a trie with no cache with substrings', function (){
     })
 
     it('it only returns the max number of results', function (){
-      expect(trie.find('test')).to(
-        equal
-        , ['eight','eleven','five','four','nine','one','seven','six','ten','three']);
+      expect(trie.find('test')).toEqual(
+        ['eight','eleven','five','four','nine','one','seven','six','ten','three']);
     });
   });
 });

@@ -59,11 +59,10 @@ Options are passed via the constructor as a hash like so:
 
 ##Testing
 
-The test suite is built using [Bob Remeika's foounit](https://github.com/foobarfighter/foounit) and can be tested in both the browser and in node.
-To test in node simple run the following command `node tests/vendor/suite.js` in the root directory or if Triejs was installed using `npm` then run `npm test`
+The test suite is built using [Pivotal Labs' jasmine](http://pivotal.github.com/jasmine) and can be tested in both the browser and in node.
+To test in node you will need to install the [jasmine-node](https://github.com/mhevery/jasmine-node) module (this is installed during an `npm install`) simple run the following command `jasmine-node tests/vendor/suite.js` in the root directory or if Triejs was installed using `npm` then run `npm test`
 
-To test in a browser you will need to `npm install` and then run `foounit serve` in the root directory.  Then you can direct your browser
-to `localhost:5057/tests/vendor/runner.html` to see the test suite run
+To test in a browser simply open tests/vendor/SpecRunner.html in your browser of choice.
 
 ##License
 

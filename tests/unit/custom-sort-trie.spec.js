@@ -1,5 +1,6 @@
-foounit.require(':vendor/spec-helper');
-var Triejs = foounit.require(':src/trie');
+if (typeof window === 'undefined') {
+  var Triejs = require('../../src/trie.js');
+}
 
 /**
 * @description Test the default trie data implementation with
@@ -8,7 +9,7 @@ var Triejs = foounit.require(':src/trie');
 describe('When using a custom array data source trie', function (){
   var trie;
 
-  before(function (){
+  beforeEach(function (){
     trie = new Triejs({
       sort: function() {
         this.sort(function(a, b) { return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0); });
@@ -16,7 +17,7 @@ describe('When using a custom array data source trie', function (){
     });
   });
 
-  after(function() {
+  afterEach(function() {
     delete trie;
   });
 
@@ -25,31 +26,31 @@ describe('When using a custom array data source trie', function (){
   */
   describe('and adding a word', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test', {name: 'word'});
     })
 
     it('it exists in the trie', function (){
-      expect(trie.find('test')).to(equal, [{name: 'word'}]);
+      expect(trie.find('test')).toEqual([{name: 'word'}]);
     });
 
     it('it can be retrieved by prefix', function (){
-      expect(trie.find('t')).to(equal, [{name: 'word'}]);
-      expect(trie.find('te')).to(equal, [{name: 'word'}]);
-      expect(trie.find('tes')).to(equal, [{name: 'word'}]);
+      expect(trie.find('t')).toEqual([{name: 'word'}]);
+      expect(trie.find('te')).toEqual([{name: 'word'}]);
+      expect(trie.find('tes')).toEqual([{name: 'word'}]);
     });
 
     it('it is not found when using incorrect prefix', function (){
-      expect(trie.find('wrong')).toNot(equal, [{name: 'word'}]);
-      expect(trie.find('wrong')).to(beUndefined);
+      expect(trie.find('wrong')).not.toEqual([{name: 'word'}]);
+      expect(trie.find('wrong')).toBeUndefined();
     });
 
     it('it is not found when using non string prefix', function (){
-      expect(trie.find(true)).to(beUndefined);
-      expect(trie.find(1)).to(beUndefined);
-      expect(trie.find(function() {})).to(beUndefined);
-      expect(trie.find(null)).to(beUndefined);
-      expect(trie.find(undefined)).to(beUndefined);
+      expect(trie.find(true)).toBeUndefined();
+      expect(trie.find(1)).toBeUndefined();
+      expect(trie.find(function() {})).toBeUndefined();
+      expect(trie.find(null)).toBeUndefined();
+      expect(trie.find(undefined)).toBeUndefined();
     });
   });
 
@@ -58,7 +59,7 @@ describe('When using a custom array data source trie', function (){
   */
   describe('and adding a non string word', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add(1, {name: 'word'});
       trie.add(false, {name: 'word'});
       trie.add(function() {}, {name: 'word'});
@@ -67,7 +68,7 @@ describe('When using a custom array data source trie', function (){
     })
 
     it('it adds nothing to the trie', function (){
-      expect(trie.root).to(equal, {});
+      expect(trie.root).toEqual({});
     });
   });
 
@@ -76,14 +77,14 @@ describe('When using a custom array data source trie', function (){
   */
   describe('and adding two words', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test', {name: 'word'});
       trie.add('testing', {name: 'another word'});
       trie.add('testi', {name: 'bob'})
     })
 
     it('they exist in the trie', function (){
-      expect(trie.find('test')).to(equal, [{name: 'another word'}, {name: 'bob'}, {name: 'word'}]);
+      expect(trie.find('test')).toEqual([{name: 'another word'}, {name: 'bob'}, {name: 'word'}]);
     });
   });
 
@@ -92,13 +93,13 @@ describe('When using a custom array data source trie', function (){
   */
   describe('and adding two identical words', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('one', {name: 'word'});
       trie.add('one', {name: 'another word'});
     });
 
     it('they exist in the trie', function() {
-      expect(trie.find('o')).to(equal, [{name: 'another word'}, {name: 'word'}]);
+      expect(trie.find('o')).toEqual([{name: 'another word'}, {name: 'word'}]);
     });
   });
 
@@ -107,15 +108,15 @@ describe('When using a custom array data source trie', function (){
   */
   describe('and adding a word with capitals', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('Test', {name: 'word'});
     })
 
     it('it can be found in the trie', function (){
-      expect(trie.find('test')).to(equal, [{name: 'word'}]);
+      expect(trie.find('test')).toEqual([{name: 'word'}]);
     });
     it('it can be found in the trie with capitals', function (){
-      expect(trie.find('Test')).to(equal, [{name: 'word'}]);
+      expect(trie.find('Test')).toEqual([{name: 'word'}]);
     });
   });
 
@@ -124,14 +125,14 @@ describe('When using a custom array data source trie', function (){
   */
   describe('and modifying an added word', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test', {name: 'word'});
     })
 
     it('it does not modify the word in the tree', function (){
       var words = trie.find('test');
       words[0] = 'new';
-      expect(trie.find('test')).to(equal, [{name: 'word'}]);
+      expect(trie.find('test')).toEqual([{name: 'word'}]);
     });
   });
 
@@ -140,13 +141,13 @@ describe('When using a custom array data source trie', function (){
   */
   describe('and adding a sub word', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('test word', {name: 'word'});
       trie.add('test', {name: 'test'});
     })
 
     it('it doesnt throw errors', function (){
-      expect(trie.find('test')).to(equal, [{name: 'test'}, {name: 'word'}]);
+      expect(trie.find('test')).toEqual([{name: 'test'}, {name: 'word'}]);
     });
   });
 
@@ -155,7 +156,7 @@ describe('When using a custom array data source trie', function (){
   */
   describe('and adding more words than the cache', function() {
 
-    before(function() {
+    beforeEach(function() {
       trie.add('testone', {name: 'one'});
       trie.add('testtwo', {name: 'two'});
       trie.add('testthree', {name: 'three'});
@@ -170,7 +171,7 @@ describe('When using a custom array data source trie', function (){
     })
 
     it('it only returns the max number of results', function (){
-      expect(trie.find('t')).to(equal,
+      expect(trie.find('t')).toEqual(
         [
           {name:'eight'}
         , {name:'eleven'}
