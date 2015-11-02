@@ -1,6 +1,6 @@
 {
   "name": "triejs",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "author": "Paul Thurlow",
   "description": "Customizable trie data structure built in JavaScript.",
   "keywords": [
@@ -11,7 +11,7 @@
   ],
   "homepage": "http://pthurlow.github.com/triejs",
   "contibutors": [],
-  "dependencies": {
+  "devDependencies": {
     "foounit": ""
   },
   "scripts": {
@@ -22,7 +22,6 @@
     "type": "git",
     "url": "git://github.com/pthurlow/triejs.git"
   },
-  "devDependencies": {},
   "engines": {
     "node": "*"
   }
